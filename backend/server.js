@@ -38,7 +38,7 @@ app.get('*', (req, res) => {
 });
 
 // Start listening
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`===============================================`);
   console.log(`  KejaKU Backend Server running!               `);
   console.log(`  - Local:   http://localhost:${PORT}          `);

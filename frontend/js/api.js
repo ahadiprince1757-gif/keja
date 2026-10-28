@@ -4,7 +4,8 @@
  * Automatically falls back to offline/local mode if backend is not running
  */
 
-const API_BASE = window.location.origin.includes('localhost:5000')
+// On Render or any web server, use relative path '/api'. Fallback to localhost if file://
+const API_BASE = window.location.protocol.startsWith('http')
   ? '/api'
   : 'http://localhost:5000/api';
 
