@@ -1,0 +1,14 @@
+{
+  "name": "keja",
+  "version": "1.0.0",
+  "description": "Fullstack Kenyatta University Student Housing platform with frontend and backend",
+  "scripts": {
+    "start": "node backend/server.js",
+    "dev": "node --watch backend/server.js",
+    "server": "node backend/server.js",
+    "install:all": "cd backend && npm install"
+  },
+  "keywords": ["student-housing", "kenyatta-university", "keja", "express", "fullstack"],
+  "author": "",
+  "license": "ISC"
+}

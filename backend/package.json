@@ -1,0 +1,17 @@
+{
+  "name": "keja-backend",
+  "version": "1.0.0",
+  "description": "REST API backend for KejaKU Student Housing platform",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "keywords": ["student-housing", "kenya", "kenyatta-university", "express", "api"],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.1"
+  }
+}

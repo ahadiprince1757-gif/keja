@@ -1,0 +1,164 @@
+/* ==========================================================================
+   Navigation Bar & Header
+   ========================================================================== */
+
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--border-subtle);
+  transition: all var(--transition-normal);
+}
+
+.nav-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 72px;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* Brand Logo */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  user-select: none;
+}
+
+.brand-icon {
+  width: 40px;
+  height: 40px;
+  background: var(--primary-gradient);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  box-shadow: 0 4px 10px rgba(14, 91, 65, 0.25);
+  transition: transform var(--transition-normal);
+}
+
+.brand:hover .brand-icon {
+  transform: rotate(-6deg) scale(1.05);
+}
+
+.brand-text {
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--primary);
+  letter-spacing: -0.03em;
+  display: flex;
+  align-items: center;
+}
+
+.brand-text span {
+  color: var(--text-main);
+  font-weight: 500;
+}
+
+.brand-badge {
+  font-size: 0.65rem;
+  background: var(--primary-light);
+  color: var(--primary);
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: var(--radius-full);
+  margin-left: 8px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* Nav Actions */
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.btn-saved-houses {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  padding: 9px 16px;
+  border-radius: var(--radius-full);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-main);
+  transition: all var(--transition-normal);
+}
+
+.btn-saved-houses:hover {
+  background: var(--bg-subtle);
+  border-color: #cbd8cf;
+}
+
+.btn-saved-houses .heart-icon {
+  color: var(--red);
+  font-size: 1.1rem;
+  line-height: 1;
+  transition: transform var(--transition-fast);
+}
+
+.btn-saved-houses:hover .heart-icon {
+  transform: scale(1.15);
+}
+
+.saved-count-pill {
+  background: var(--primary-light);
+  color: var(--primary);
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 1px 7px;
+  border-radius: var(--radius-full);
+  min-width: 18px;
+  text-align: center;
+}
+
+.btn-list-house {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 18px;
+  border-radius: var(--radius-full);
+  font-size: 0.88rem;
+}
+
+/* Mobile responsive navigation */
+@media (max-width: 640px) {
+  .nav-container {
+    height: 62px;
+    padding: 0 16px;
+  }
+
+  .brand-text {
+    font-size: 1.3rem;
+  }
+
+  .brand-badge {
+    display: none;
+  }
+
+  .btn-saved-houses span:not(.heart-icon):not(.saved-count-pill) {
+    display: none;
+  }
+
+  .btn-saved-houses {
+    padding: 8px 12px;
+  }
+
+  .btn-list-house {
+    padding: 8px 14px;
+    font-size: 0.82rem;
+  }
+}
