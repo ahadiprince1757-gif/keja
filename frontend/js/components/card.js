@@ -1,6 +1,6 @@
 /**
  * House Card Component
- * Renders individual house listing card HTML
+ * Renders individual house listing card HTML with multi-photo count and deep specs
  */
 
 import { isSaved } from './saved.js';
@@ -21,14 +21,20 @@ export function escapeHtml(str) {
 
 export function createHouseCard(house) {
   const saved = isSaved(house.id);
-  const isVisited = house.status === 'visited';
+  const isVisited = house.status === 'visited' || house.status === 'verified';
+  const images = (Array.isArray(house.images) && house.images.length > 0)
+    ? house.images
+    : (house.image ? [house.image] : ['https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1200&q=80']);
+  
+  const coverImage = images[0];
+  const photoCount = images.length;
 
   const badgeHtml = isVisited
-    ? `<span class="badge badge-verified"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg> Physical Visit Verified</span>`
-    : `<span class="badge badge-unverified"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg> Student Submitted</span>`;
+    ? `<span class="badge badge-verified"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg> Verified Property</span>`
+    : `<span class="badge badge-featured"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg> Student Favorite</span>`;
 
   const amenitiesHtml = (house.features || [])
-    .slice(0, 3)
+    .slice(0, 4)
     .map(feat => `<span class="amenity-chip">${escapeHtml(feat)}</span>`)
     .join('');
 
@@ -36,14 +42,21 @@ export function createHouseCard(house) {
     <article class="house-card" data-id="${house.id}">
       <div class="card-media">
         <img
-          src="${escapeHtml(house.image)}"
+          src="${escapeHtml(coverImage)}"
           alt="${escapeHtml(house.title)}"
           loading="lazy"
-          onerror="this.src='https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=800&q=80'"
+          onerror="this.src='https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1200&q=80'"
         />
 
         <div class="card-badge-top-left">
           ${badgeHtml}
+        </div>
+
+        <div class="card-badge-bottom-left">
+          <span class="card-photo-count">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+            ${photoCount} ${photoCount === 1 ? 'Photo' : 'Photos'}
+          </span>
         </div>
 
         <button
@@ -78,22 +91,27 @@ export function createHouseCard(house) {
           <span>${escapeHtml(house.area)} · ${escapeHtml(house.distance)}</span>
         </div>
 
+        <div class="card-spec-tags">
+          <span class="spec-pill"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg> ${escapeHtml(house.type)}</span>
+          <span class="spec-pill">${escapeHtml(house.floor || '1st Floor')}</span>
+          <span class="spec-pill vacant-pill">${escapeHtml(house.vacantUnits ? `${house.vacantUnits} Vacant` : 'Available')}</span>
+        </div>
+
         <div class="card-amenities">
-          <span class="amenity-chip" style="background:var(--primary-light);color:var(--primary);">${escapeHtml(house.type)}</span>
           ${amenitiesHtml}
         </div>
 
         <div class="card-meta-notes">
           <div><strong>Water:</strong> ${escapeHtml(house.water)}</div>
-          <div><strong>Electricity:</strong> ${escapeHtml(house.electricity)}</div>
+          <div><strong>Tokens:</strong> ${escapeHtml(house.electricity)}</div>
         </div>
 
         <div class="card-actions">
-          <button type="button" class="btn" data-action="details" data-id="${house.id}">
-            View Details
+          <button type="button" class="btn btn-view-details" data-action="details" data-id="${house.id}">
+            View Details (${photoCount})
           </button>
           <button type="button" class="btn btn-primary" data-action="enquire" data-id="${house.id}">
-            Enquire Now
+            Book Viewing
           </button>
         </div>
       </div>

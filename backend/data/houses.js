@@ -10,7 +10,14 @@ function getAllHouses() {
       return [];
     }
     const data = fs.readFileSync(DATA_FILE, 'utf8');
-    return JSON.parse(data || '[]');
+    const houses = JSON.parse(data || '[]');
+    // Ensure all houses have images array
+    return houses.map(h => {
+      if (!h.images || !Array.isArray(h.images) || h.images.length === 0) {
+        h.images = h.image ? [h.image] : ['https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1200&q=80'];
+      }
+      return h;
+    });
   } catch (error) {
     console.error('Error reading houses data:', error);
     return [];
@@ -34,27 +41,52 @@ function getHouseById(id) {
   return houses.find(h => h.id === Number(id));
 }
 
-// Add new house
+// Add new house with multi-image support & detailed specs
 function addHouse(houseData) {
   const houses = getAllHouses();
+
+  // Normalize images
+  let images = [];
+  if (Array.isArray(houseData.images) && houseData.images.length > 0) {
+    images = houseData.images.filter(img => typeof img === 'string' && img.trim().length > 0);
+  } else if (houseData.image && typeof houseData.image === 'string' && houseData.image.trim()) {
+    images = [houseData.image.trim()];
+  }
+
+  if (images.length === 0) {
+    images = ['https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1200&q=80'];
+  }
+
   const newHouse = {
     id: Date.now(),
-    title: houseData.title || 'Untitled House',
+    title: houseData.title ? houseData.title.trim() : 'Modern Student Apartment',
     area: houseData.area || 'Kahawa Wendani',
     landmark: houseData.landmark || '',
-    type: houseData.type || 'Single room',
-    rent: Number(houseData.rent) || 3000,
-    deposit: Number(houseData.deposit) || Number(houseData.rent) || 3000,
+    type: houseData.type || 'Bedsitter',
+    floor: houseData.floor || '1st Floor',
+    vacantUnits: Number(houseData.vacantUnits) || 1,
+    rent: Number(houseData.rent) || 4500,
+    deposit: Number(houseData.deposit) || Number(houseData.rent) || 4500,
     garbageFee: Number(houseData.garbageFee) || 150,
-    distance: houseData.distance || '10 min walk to KU',
-    water: houseData.water || 'Borehole on-site',
-    electricity: houseData.electricity || 'Tokens prepaid',
-    status: houseData.status || 'unverified',
-    caretaker: houseData.caretaker || 'Property Caretaker',
-    phone: houseData.phone || '+254700000000',
-    image: houseData.image || 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=800&q=80',
-    features: Array.isArray(houseData.features) ? houseData.features : ['Borehole Water', 'Tokens'],
-    description: houseData.description || 'Newly submitted property.'
+    distance: houseData.distance || '8 min walk to KU Nyayo Gate',
+    water: houseData.water || 'Borehole & County Water (24/7 Supply)',
+    electricity: houseData.electricity || 'Prepaid KPLC Token Meter in room',
+    wifi: houseData.wifi || 'WiFi Ready / Fibre installed',
+    gateCurfew: houseData.gateCurfew || 'Open 24/7 (Resident Key Provided)',
+    status: houseData.status || 'verified',
+    verifiedDate: new Date().toLocaleDateString('en-KE', { month: 'short', year: 'numeric' }),
+    caretaker: houseData.caretaker || 'Resident Caretaker',
+    phone: houseData.phone || '+254712345678',
+    whatsapp: houseData.whatsapp || houseData.phone || '+254712345678',
+    image: images[0],
+    images: images,
+    features: Array.isArray(houseData.features) && houseData.features.length > 0
+      ? houseData.features
+      : ['Borehole Water', 'Token Meter', 'Tiled Floor', 'Instant Hot Shower'],
+    rules: Array.isArray(houseData.rules)
+      ? houseData.rules
+      : ['No loud music after 10 PM', 'Guests permitted with notification', 'Prompt rent payment by 5th'],
+    description: houseData.description || 'Spacious, well-ventilated student housing with reliable water supply and security.'
   };
 
   houses.unshift(newHouse);

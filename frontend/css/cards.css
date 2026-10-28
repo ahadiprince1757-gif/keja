@@ -1,11 +1,11 @@
 /* ==========================================================================
-   House Cards & Listings Grid
+   House Cards & Listings Grid — Production Grade
    ========================================================================== */
 
 .listings-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 24px;
+  grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+  gap: 26px;
 }
 
 /* House Card */
@@ -22,15 +22,15 @@
 }
 
 .house-card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-md);
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-lg);
   border-color: #cbd8cf;
 }
 
 /* Card Image Header */
 .card-media {
   position: relative;
-  height: 210px;
+  height: 220px;
   background-color: #e2ede5;
   overflow: hidden;
 }
@@ -43,7 +43,7 @@
 }
 
 .house-card:hover .card-media img {
-  transform: scale(1.05);
+  transform: scale(1.06);
 }
 
 /* Image Badges Overlay */
@@ -52,7 +52,29 @@
   top: 12px;
   left: 12px;
   z-index: 2;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+}
+
+.card-badge-bottom-left {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  z-index: 2;
+}
+
+.card-photo-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .card-save-btn {
@@ -62,7 +84,7 @@
   width: 38px;
   height: 38px;
   border-radius: var(--radius-full);
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(8px);
   color: #94a3b8;
   display: flex;
@@ -92,7 +114,7 @@
 
 /* Card Body */
 .card-body {
-  padding: 20px;
+  padding: 22px;
   display: flex;
   flex-direction: column;
   flex: 1;
@@ -107,14 +129,14 @@
 
 .card-price {
   font-family: var(--font-heading);
-  font-size: 1.45rem;
+  font-size: 1.55rem;
   font-weight: 800;
   color: var(--primary);
   letter-spacing: -0.02em;
 }
 
 .card-price small {
-  font-size: 0.82rem;
+  font-size: 0.85rem;
   font-weight: 500;
   color: var(--text-muted);
   margin-left: 2px;
@@ -130,9 +152,9 @@
 }
 
 .card-title {
-  font-size: 1.15rem;
+  font-size: 1.18rem;
   font-weight: 700;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
   color: var(--text-main);
   line-height: 1.3;
 }
@@ -141,14 +163,40 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 0.85rem;
+  font-size: 0.86rem;
   color: var(--text-secondary);
-  margin-bottom: 14px;
+  margin-bottom: 12px;
 }
 
 .card-location svg {
   flex-shrink: 0;
   color: var(--primary);
+}
+
+/* Quick Spec Tags */
+.card-spec-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.spec-pill {
+  font-size: 0.76rem;
+  background: var(--bg-subtle);
+  color: var(--text-secondary);
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.spec-pill.vacant-pill {
+  background: #ecfdf5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
 }
 
 /* Amenity Chips */
