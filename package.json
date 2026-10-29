@@ -4,7 +4,7 @@
   "description": "Fullstack Kenyatta University Student Housing platform with frontend and backend",
   "main": "backend/server.js",
   "scripts": {
-    "build": "npm install --prefix backend && npm install",
+    "build": "npm install --prefix backend && npm install && vite build",
     "start": "node backend/server.js",
     "dev": "concurrently -n \"API,CLIENT\" -c \"blue,green\" \"node backend/server.js\" \"vite\"",
     "dev:client": "vite",
@@ -13,8 +13,10 @@
     "server": "node backend/server.js"
   },
   "dependencies": {
+    "bcryptjs": "^3.0.3",
     "cors": "^2.8.5",
     "express": "^4.21.1",
+    "jsonwebtoken": "^9.0.3",
     "lucide-react": "^1.64.0",
     "react-router-dom": "^7.18.5"
   },

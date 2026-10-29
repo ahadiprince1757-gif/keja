@@ -318,45 +318,282 @@
 /* Mobile responsive navigation */
 @media (max-width: 640px) {
   .nav-container {
-    height: 62px;
-    padding: 0 16px;
+    height: 60px;
+    padding: 0 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
 
   .brand-text {
-    font-size: 1.3rem;
+    font-size: 1.35rem;
   }
 
   .brand-badge {
     display: none;
   }
 
-  .btn-saved-houses span:not(.heart-icon):not(.saved-count-pill) {
-    display: none;
+  /* Move search and saved houses to bottom navbar on mobile */
+  .nav-search-wrapper {
+    display: none !important;
   }
 
   .btn-saved-houses {
-    padding: 8px 12px;
+    display: none !important;
   }
 
+  /* List a House is now clearly visible and prominent on mobile */
   .btn-list-house {
+    display: inline-flex !important;
     padding: 8px 14px;
-    font-size: 0.82rem;
-  }
-
-  .nav-search-wrapper {
-    margin: 0 8px;
-  }
-
-  .nav-search-bar {
-    width: 140px;
-    padding: 5px 10px;
-  }
-
-  .nav-search-wrapper.is-expanded .nav-search-bar {
-    width: 200px;
-  }
-
-  .nav-search-input {
-    font-size: 0.8rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    border-radius: var(--radius-full);
+    box-shadow: 0 3px 8px rgba(14, 91, 65, 0.28);
   }
 }
+
+/* ==========================================================================
+   Smart Floating Mobile Bottom Navigation Bar
+   (Hides on scroll down, appears on scroll up)
+   ========================================================================== */
+
+.mobile-bottom-nav {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  body {
+    padding-bottom: 68px;
+  }
+
+  .mobile-bottom-nav {
+    display: block;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    z-index: 850;
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border-top: 1px solid rgba(203, 216, 207, 0.85);
+    box-shadow: 0 -4px 20px rgba(15, 23, 42, 0.08);
+    transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+    padding: 6px 12px calc(6px + env(safe-area-inset-bottom, 6px)) 12px;
+  }
+
+  .mobile-bottom-nav.is-hidden {
+    transform: translateY(105%);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .bottom-nav-inner {
+    display: flex;
+    width: 100%;
+    max-width: 520px;
+    margin: 0 auto;
+    justify-content: space-around;
+    align-items: center;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+    gap: 8px;
+  }
+
+  .bottom-nav-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    padding: 6px 4px;
+    border-radius: 12px;
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 0;
+  }
+
+  .bottom-nav-item:active {
+    transform: scale(0.94);
+  }
+
+  .bottom-nav-item.is-active {
+    color: var(--primary);
+    background: #edf7f0;
+  }
+
+  .bottom-nav-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 24px;
+    position: relative;
+  }
+
+  .heart-icon-wrap {
+    position: relative;
+  }
+
+  .bottom-nav-badge {
+    position: absolute;
+    top: -4px;
+    right: -12px;
+    background: var(--primary);
+    color: #ffffff;
+    font-size: 0.65rem;
+    font-weight: 800;
+    padding: 1px 5px;
+    border-radius: 9999px;
+    border: 1.5px solid #ffffff;
+    line-height: 1;
+    min-width: 15px;
+    text-align: center;
+  }
+
+  .bottom-nav-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    margin-top: 3px;
+    letter-spacing: 0.01em;
+  }
+
+  /* Bottom Search Overlay & Drawer */
+  .bottom-search-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.55);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: 950;
+    display: flex;
+    align-items: flex-end;
+    animation: fadeInOverlay 0.2s ease;
+  }
+
+  .bottom-search-drawer {
+    width: 100%;
+    background: #ffffff;
+    border-radius: 20px 20px 0 0;
+    padding: 18px 16px 28px 16px;
+    box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.2);
+    animation: slideUpDrawer 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .bottom-search-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .bottom-search-input-wrap {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    background: #f1f5f9;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 9999px;
+    padding: 8px 14px;
+    gap: 8px;
+    color: #0f172a;
+  }
+
+  .bottom-search-input-wrap:focus-within {
+    border-color: var(--primary);
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(14, 91, 65, 0.15);
+  }
+
+  .bottom-search-input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-size: 0.92rem;
+    color: #0f172a;
+    outline: none;
+  }
+
+  .bottom-search-clear {
+    border: none;
+    background: #cbd5e1;
+    color: #475569;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    font-size: 0.72rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    cursor: pointer;
+  }
+
+  .bottom-search-close-btn {
+    border: none;
+    background: var(--primary-light, #e6f4ea);
+    color: var(--primary);
+    font-weight: 700;
+    font-size: 0.88rem;
+    padding: 8px 14px;
+    border-radius: 9999px;
+    cursor: pointer;
+  }
+
+  .bottom-search-chips {
+    margin-top: 14px;
+  }
+
+  .chips-title {
+    display: block;
+    font-size: 0.76rem;
+    font-weight: 700;
+    color: #64748b;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .chips-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .bottom-chip {
+    border: 1px solid #e2e8f0;
+    background: #f8fafc;
+    color: #334155;
+    padding: 6px 12px;
+    border-radius: 9999px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.18s ease;
+  }
+
+  .bottom-chip:active {
+    background: var(--primary-light, #e6f4ea);
+    color: var(--primary);
+    border-color: var(--primary);
+  }
+
+  @keyframes fadeInOverlay {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes slideUpDrawer {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
+}
+

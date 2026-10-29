@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import Navbar from "../components/Navbar";
-import NoticeBanner from "../components/NoticeBanner";
+import BottomNav from "../components/BottomNav";
 import FilterSidebar from "../components/FilterSidebar";
 import HouseCard from "../components/HouseCard";
 import HowItWorks from "../components/HowItWorks";
@@ -163,8 +163,6 @@ export default function HomePage() {
       />
 
       <main className="container">
-        <NoticeBanner />
-
         <div className="content-layout">
           <FilterSidebar
             filters={filters}
@@ -190,7 +188,12 @@ export default function HomePage() {
             <div className="listings-grid" id="listingsGrid">
               {filteredHouses.length === 0 ? (
                 <div className="no-results-card">
-                  <div className="no-results-icon">🔍</div>
+                  <div className="no-results-icon">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <circle cx="11" cy="11" r="8"></circle>
+                      <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                  </div>
                   <h3 className="no-results-title">No houses match "{filters.keyword || 'your filters'}"</h3>
                   <p className="no-results-subtitle">
                     Try searching for different spots around KU or click a popular area below:
@@ -270,6 +273,16 @@ export default function HomePage() {
 
       {/* Toast Notification */}
       <Toast message={toast.message} type={toast.type} />
+
+      {/* Smart Mobile Bottom Navigation */}
+      <BottomNav
+        savedCount={savedIds.size}
+        isSavedActive={filters.savedOnly}
+        onOpenSaved={handleOpenSavedOnly}
+        searchTerm={filters.keyword}
+        onSearchChange={(val) => handleFilterChange("keyword", val)}
+        onOpenFilters={() => setIsMobileFiltersOpen((prev) => !prev)}
+      />
     </>
   );
 }

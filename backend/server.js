@@ -2,6 +2,8 @@ const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '.env') });
 const express = require('express');
 const cors = require('cors');
+const fs = require('fs');
+
 
 const housesRouter    = require('./routes/houses');
 const authRouter      = require('./routes/auth');
@@ -22,16 +24,19 @@ app.use('/api/auth',      authRouter);
 app.use('/api/accounts',  accountsRouter);
 app.use('/api/enquiries', enquiriesRouter);
 
-// Statically serve frontend files
+// Statically serve frontend files (prefer production dist if built, fallback to frontend)
+const distPath = path.join(__dirname, '../dist');
 const frontendPath = path.join(__dirname, '../frontend');
-app.use(express.static(frontendPath));
+const clientPath = fs.existsSync(distPath) ? distPath : frontendPath;
 
-// Fallback to frontend index.html for client-side routing
+app.use(express.static(clientPath));
+
+// Fallback to index.html for client-side routing
 app.get('*', (req, res) => {
   if (req.path.startsWith('/api')) {
     return res.status(404).json({ error: 'Endpoint not found' });
   }
-  res.sendFile(path.join(frontendPath, 'index.html'));
+  res.sendFile(path.join(clientPath, 'index.html'));
 });
 
 // Start listening

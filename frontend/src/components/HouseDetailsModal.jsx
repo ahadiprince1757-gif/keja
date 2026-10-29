@@ -29,27 +29,32 @@ export default function HouseDetailsModal({
 
   return (
     <div className="modal-backdrop open" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
-      <div className="modal-container" style={{ maxWidth: '720px' }}>
+      <div className="modal-container detail-modal-container">
+        {/* Header Bar */}
         <div className="modal-header">
-          <h2>Property Details & Gallery</h2>
+          <div className="modal-header-info">
+            <span className="modal-type-badge">{house.type}</span>
+            <span className="modal-header-area">{house.area}</span>
+          </div>
           <button
             type="button"
             className="modal-close-btn"
             onClick={onClose}
             aria-label="Close dialog"
           >
-            ×
+            ✕
           </button>
         </div>
 
-        <div className="modal-body">
-          {/* Interactive Photo Gallery Carousel */}
+        {/* Modal Scrollable Content */}
+        <div className="modal-body detail-modal-body">
+          {/* Photo Gallery Carousel */}
           <div className="product-gallery">
             <div className="gallery-main-view">
               <img
-                id="galleryMainImg"
                 src={images[currentImgIdx]}
                 alt={house.title}
+                loading="eager"
               />
 
               {images.length > 1 && (
@@ -73,11 +78,16 @@ export default function HouseDetailsModal({
                 </>
               )}
 
-              <div className="gallery-counter-badge" id="galleryCounterBadge">
+              <div className="gallery-counter-badge">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" style={{ marginRight: '4px' }}>
+                  <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                  <circle cx="12" cy="13" r="4"></circle>
+                </svg>
                 {currentImgIdx + 1} / {images.length}
               </div>
             </div>
 
+            {/* Thumbnail Strip */}
             {images.length > 1 && (
               <div className="gallery-thumbnails-strip">
                 {images.map((img, idx) => (
@@ -94,73 +104,120 @@ export default function HouseDetailsModal({
             )}
           </div>
 
-          {/* Header & Price Summary */}
-          <div className="detail-header-row">
-            <div>
-              <h3 className="detail-title">{house.title}</h3>
-              <p className="detail-location-sub">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                  <circle cx="12" cy="10" r="3"></circle>
-                </svg>
-                <strong>{house.area}</strong> · {house.landmark || ''}
-              </p>
-            </div>
-            <div className="detail-price-box">
-              <div className="detail-price-val">{formatMoney(house.rent)}<small>/mo</small></div>
-              <span className="detail-vacancy-pill">
-                {house.vacantUnits ? `${house.vacantUnits} Rooms Vacant` : 'Available'}
+          {/* Pricing & Key Meta Bar */}
+          <div className="detail-hero-box">
+            <div className="detail-price-line">
+              <div className="detail-price-main">
+                {formatMoney(house.rent)}
+                <span className="detail-price-period"> / month</span>
+              </div>
+              <span className="detail-vacant-badge">
+                {house.vacantUnits ? `${house.vacantUnits} Unit${house.vacantUnits > 1 ? 's' : ''} Vacant` : 'Available'}
               </span>
+            </div>
+
+            <h3 className="detail-hero-title">{house.title}</h3>
+
+            <div className="detail-location-row">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                <circle cx="12" cy="10" r="3"></circle>
+              </svg>
+              <span className="location-main-text"><strong>{house.area}</strong></span>
+              {house.landmark && <span className="location-landmark">· {house.landmark}</span>}
             </div>
           </div>
 
-          {/* Verified Badge Alert */}
+          {/* Trust Verification Card */}
           <div className="verified-trust-card">
             <div className="trust-icon">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
                 <polyline points="20 6 9 17 4 12"></polyline>
               </svg>
             </div>
-            <div>
-              <strong>Keja Verified Listing</strong>
-              <p>Physical inspection confirmed active vacancy, working lock & key, high tap pressure, and registered caretaker.</p>
+            <div className="trust-body">
+              <div className="trust-title">Keja Verified Listing</div>
+              <div className="trust-subtitle">
+                Physical check confirmed active vacancy, working lock & key, and high water pressure.
+              </div>
             </div>
           </div>
 
-          {/* Quick Spec Chips */}
-          <div className="detail-quick-specs">
-            <div className="spec-cell">
-              <span className="spec-label">Room Type</span>
-              <span className="spec-val">{house.type}</span>
+          {/* Structured Property Specs Card */}
+          <div className="detail-specs-card">
+            {/* Short specs row: Type & Floor */}
+            <div className="specs-row-split">
+              <div className="spec-item">
+                <div className="spec-icon-box">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                  </svg>
+                </div>
+                <div className="spec-text">
+                  <span className="spec-label-sm">Room Type</span>
+                  <span className="spec-val-bold">{house.type}</span>
+                </div>
+              </div>
+
+              <div className="spec-item">
+                <div className="spec-icon-box">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                    <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
+                    <line x1="9" y1="22" x2="9" y2="22.01"></line>
+                    <line x1="15" y1="22" x2="15" y2="22.01"></line>
+                    <line x1="9" y1="6" x2="9" y2="6.01"></line>
+                    <line x1="15" y1="6" x2="15" y2="6.01"></line>
+                    <line x1="9" y1="10" x2="9" y2="10.01"></line>
+                    <line x1="15" y1="10" x2="15" y2="10.01"></line>
+                    <line x1="9" y1="14" x2="9" y2="14.01"></line>
+                    <line x1="15" y1="14" x2="15" y2="14.01"></line>
+                  </svg>
+                </div>
+                <div className="spec-text">
+                  <span className="spec-label-sm">Floor Level</span>
+                  <span className="spec-val-bold">{house.floor || '1st Floor'}</span>
+                </div>
+              </div>
             </div>
-            <div className="spec-cell">
-              <span className="spec-label">Floor</span>
-              <span className="spec-val">{house.floor || '1st Floor'}</span>
+
+            {/* Campus Commute (Full Width) */}
+            <div className="spec-item spec-item-full">
+              <div className="spec-icon-box">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+              </div>
+              <div className="spec-text">
+                <span className="spec-label-sm">Campus Distance</span>
+                <span className="spec-val-bold">{house.distance}</span>
+              </div>
             </div>
-            <div className="spec-cell">
-              <span className="spec-label">Commute to Campus</span>
-              <span className="spec-val">{house.distance}</span>
-            </div>
-            <div className="spec-cell">
-              <span className="spec-label">Gate Access</span>
-              <span className="spec-val">{house.gateCurfew || 'Resident Key'}</span>
+
+            {/* Gate Access & Curfew (Full Width) */}
+            <div className="spec-item spec-item-full">
+              <div className="spec-icon-box">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                  <path d="M21 2l-2 2m-1.5 1.5L14 9l-1.5-1.5-3 3 1.5 1.5L9 14l-1.5-1.5-3 3 1.5 1.5-2 2"></path>
+                  <circle cx="7.5" cy="16.5" r="4.5"></circle>
+                </svg>
+              </div>
+              <div className="spec-text">
+                <span className="spec-label-sm">Gate Access</span>
+                <span className="spec-val-bold">{house.gateCurfew || 'Open 24/7 (Resident Key Provided)'}</span>
+              </div>
             </div>
           </div>
 
-          {/* Property Description */}
-          <div className="detail-section">
-            <h4 className="section-subheading">About the Residence</h4>
-            <p className="detail-description-text">{house.description}</p>
-          </div>
-
-          {/* Key Amenities Checklist */}
+          {/* Features & Highlights */}
           {Array.isArray(house.features) && house.features.length > 0 && (
             <div className="detail-section">
-              <h4 className="section-subheading">Features & Amenities</h4>
-              <div className="modal-features-grid">
+              <h4 className="detail-section-title">Amenities & Highlights</h4>
+              <div className="detail-chips-wrap">
                 {house.features.map((f, i) => (
-                  <div key={i} className="modal-feature-item">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <div key={i} className="amenity-badge-pill">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
                       <polyline points="20 6 9 17 4 12"></polyline>
                     </svg>
                     <span>{f}</span>
@@ -170,83 +227,95 @@ export default function HouseDetailsModal({
             </div>
           )}
 
+          {/* Description */}
+          <div className="detail-section">
+            <h4 className="detail-section-title">About the Residence</h4>
+            <p className="detail-description-para">{house.description}</p>
+          </div>
+
           {/* Move-in Cost Breakdown */}
           <div className="detail-section">
-            <h4 className="section-subheading">Move-in Cost Breakdown</h4>
-            <table className="modal-breakdown-table">
-              <tbody>
-                <tr>
-                  <td>1st Month Rent</td>
-                  <td>{formatMoney(house.rent)}</td>
-                </tr>
-                <tr>
-                  <td>Refundable Security Deposit</td>
-                  <td>{formatMoney(house.deposit)}</td>
-                </tr>
-                <tr>
-                  <td>Monthly Garbage Collection</td>
-                  <td>{formatMoney(house.garbageFee || 150)}</td>
-                </tr>
-                <tr>
-                  <td>Water Supply Details</td>
-                  <td style={{ fontSize: '0.85rem', fontWeight: 'normal' }}>{house.water}</td>
-                </tr>
-                <tr>
-                  <td>Electricity / Tokens</td>
-                  <td style={{ fontSize: '0.85rem', fontWeight: 'normal' }}>{house.electricity}</td>
-                </tr>
-                <tr>
-                  <td>Internet / Wi-Fi</td>
-                  <td style={{ fontSize: '0.85rem', fontWeight: 'normal' }}>{house.wifi || 'Available'}</td>
-                </tr>
-                <tr className="table-total-row">
-                  <td>Estimated Initial Move-In Total</td>
-                  <td style={{ color: 'var(--primary)', fontSize: '1.15rem', fontWeight: '800' }}>
-                    {formatMoney(totalMoveIn)}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+            <h4 className="detail-section-title">Move-in Cost Breakdown</h4>
+            <div className="cost-breakdown-card">
+              <div className="cost-row">
+                <span>1st Month Rent</span>
+                <strong>{formatMoney(house.rent)}</strong>
+              </div>
+              <div className="cost-row">
+                <span>Refundable Deposit</span>
+                <strong>{formatMoney(house.deposit)}</strong>
+              </div>
+              <div className="cost-row">
+                <span>Monthly Garbage Collection</span>
+                <strong>{formatMoney(house.garbageFee || 150)}</strong>
+              </div>
+              <div className="cost-row cost-utility-row">
+                <span>Water Supply</span>
+                <span className="cost-sub-val">{house.water}</span>
+              </div>
+              <div className="cost-row cost-utility-row">
+                <span>Electricity</span>
+                <span className="cost-sub-val">{house.electricity}</span>
+              </div>
+              <div className="cost-row cost-utility-row">
+                <span>Internet / Wi-Fi</span>
+                <span className="cost-sub-val">{house.wifi || 'Available'}</span>
+              </div>
+              <div className="cost-row cost-total-row">
+                <span>Estimated Move-In Total</span>
+                <span className="cost-total-amount">{formatMoney(totalMoveIn)}</span>
+              </div>
+            </div>
           </div>
 
           {/* House Rules */}
           {Array.isArray(house.rules) && house.rules.length > 0 && (
             <div className="detail-section">
-              <h4 className="section-subheading">Building Regulations</h4>
+              <h4 className="detail-section-title">Building Regulations</h4>
               <ul className="detail-rules-list">
-                {house.rules.map((r, i) => (
-                  <li key={i}>{r}</li>
+                {house.rules.map((rule, idx) => (
+                  <li key={idx}>{rule}</li>
                 ))}
               </ul>
             </div>
           )}
 
-          {/* Caretaker Contact & Action Buttons */}
-          <div className="caretaker-card">
-            <div className="caretaker-info">
-              <div className="caretaker-avatar">
-                {(house.caretaker || 'C')[0]}
-              </div>
-              <div>
-                <div className="caretaker-name">{house.caretaker || 'Resident Caretaker'}</div>
-                <div className="caretaker-role">Authorized Property Manager · Typically replies in &lt; 15 mins</div>
-              </div>
+          {/* Caretaker Info Card */}
+          <div className="caretaker-banner">
+            <div className="caretaker-avatar">
+              {(house.caretaker || 'C')[0]}
             </div>
-
-            <div className="caretaker-actions-grid" style={{ gridTemplateColumns: '1fr' }}>
-              <button
-                type="button"
-                className="btn btn-primary"
-                style={{ width: '100%', justifyContent: 'center' }}
-                onClick={() => {
-                  onClose();
-                  onOpenEnquiry(house);
-                }}
-              >
-                Talk to Caretaker
-              </button>
+            <div className="caretaker-meta">
+              <div className="caretaker-name">{house.caretaker || 'Resident Caretaker'}</div>
+              <div className="caretaker-desc">Authorized Property Manager · Replies fast</div>
             </div>
           </div>
+        </div>
+
+        {/* Modal Sticky Bottom Action Bar */}
+        <div className="modal-sticky-footer">
+          <a
+            href={whatsappUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn modal-whatsapp-btn"
+          >
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766 0-3.187-2.59-5.771-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.303-.058.116-.087.188-.173.289l-.26.302c-.087.087-.178.181-.077.355.101.174.449.741.964 1.2.662.591 1.22.774 1.393.861.173.086.275.072.376-.044.101-.116.433-.506.549-.68.116-.173.231-.144.39-.086s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.099.824z"/>
+            </svg>
+            WhatsApp
+          </a>
+
+          <button
+            type="button"
+            className="btn btn-primary modal-book-btn"
+            onClick={() => {
+              onClose();
+              onOpenEnquiry(house);
+            }}
+          >
+            Schedule Viewing
+          </button>
         </div>
       </div>
     </div>
