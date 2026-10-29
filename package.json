@@ -4,7 +4,7 @@
   "description": "Fullstack Kenyatta University Student Housing platform with frontend and backend",
   "main": "backend/server.js",
   "scripts": {
-    "build": "npm install --prefix backend && npm install",
+    "build": "npm install --prefix backend && npm install && vite build",
     "start": "node backend/server.js",
     "dev": "concurrently -n \"API,CLIENT\" -c \"blue,green\" \"node backend/server.js\" \"vite\"",
     "dev:client": "vite",
