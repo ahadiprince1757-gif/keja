@@ -282,6 +282,51 @@
   font-size: 0.92rem;
 }
 
+/* ==========================================================================
+   No Results Fallback Card (Phase 3)
+   ========================================================================== */
+.no-results-card {
+  grid-column: 1 / -1;
+  background: var(--bg-surface);
+  border: 1.5px dashed #cbdad0;
+  border-radius: var(--radius-xl);
+  padding: 56px 24px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 12px 0;
+}
+
+.no-results-icon {
+  font-size: 2.5rem;
+  margin-bottom: 12px;
+  line-height: 1;
+}
+
+.no-results-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 8px;
+}
+
+.no-results-subtitle {
+  color: var(--text-muted);
+  font-size: 0.92rem;
+  max-width: 440px;
+  margin-bottom: 18px;
+}
+
+.no-results-suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  max-width: 520px;
+}
+
 @media (max-width: 480px) {
   .listings-grid {
     grid-template-columns: 1fr;

@@ -6,7 +6,10 @@
   "scripts": {
     "build": "npm install --prefix backend && npm install",
     "start": "node backend/server.js",
-    "dev": "node --watch backend/server.js",
+    "dev": "concurrently -n \"API,CLIENT\" -c \"blue,green\" \"node backend/server.js\" \"vite\"",
+    "dev:client": "vite",
+    "dev:server": "node --watch backend/server.js",
+    "build:client": "vite build",
     "server": "node backend/server.js"
   },
   "dependencies": {
@@ -21,5 +24,12 @@
     "fullstack"
   ],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "@vitejs/plugin-react": "^6.1.2",
+    "concurrently": "^10.0.6",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "vite": "^8.3.5"
+  }
 }

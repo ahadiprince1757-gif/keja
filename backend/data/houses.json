@@ -3,7 +3,7 @@
     "id": 1,
     "title": "Sunlit Executive Single Room with Balcony",
     "area": "Kahawa Wendani",
-    "landmark": "Behind Magunas Supermarket, 2nd Turn after Stage",
+    "landmark": "Behind Magunas Supermarket, Matopeni Road, 2nd Turn after Stage",
     "type": "Single room",
     "floor": "2nd Floor",
     "vacantUnits": 2,
@@ -29,13 +29,13 @@
     ],
     "features": ["Borehole Water 24/7", "Free High-Speed WiFi", "Prepaid Tokens", "Tiled Floor", "Perimeter Wall & Gate", "CCTV Security"],
     "rules": ["No smoking inside the building", "Quiet study hours after 10 PM", "Rent payable by 5th of each month"],
-    "description": "Premium, naturally lit single room tailored for Kenyatta University students. Features ceramic tiled flooring, pre-installed curtain rods, sturdy steel security door, and an overhead study lamp socket. Constant water pressure with an automated pumping reserve tank. Only 2 minutes to the Wendani matatu stage and 7 minutes easy walk into campus."
+    "description": "Premium, naturally lit single room tailored for Kenyatta University students near Magunas Supermarket and Matopeni stage. Features ceramic tiled flooring, pre-installed curtain rods, sturdy steel security door, and an overhead study lamp socket. Constant water pressure with an automated pumping reserve tank."
   },
   {
     "id": 2,
     "title": "Prime KM Executive Studio Bedsitter",
     "area": "Near KU main gate",
-    "landmark": "KM Gate Phase 2, Next to Equity Bank Agent",
+    "landmark": "KM Gate Phase 2, Near Transformer & Kwa Symo (Small Gate)",
     "type": "Bedsitter",
     "floor": "1st Floor",
     "vacantUnits": 1,
@@ -61,13 +61,13 @@
     ],
     "features": ["Private Bathroom", "Instant Hot Shower", "Granite Kitchenette", "Free WiFi", "CCTV Security", "Private Balcony"],
     "rules": ["Visitors must register with caretaker after 9 PM", "Cook with gas or electricity only (no paraffin)"],
-    "description": "Modern executive studio apartment right at the heart of KM. Includes fitted kitchen cabinets with granite countertop, clean ceramic tiled washroom with high-pressure instant hot shower, and a private rear balcony for laundry drying. Compound is monitored by 8 CCTV cameras with night guard."
+    "description": "Modern executive studio apartment right at the heart of KM near Transformer and Kwa Symo, just steps to Small Gate. Includes fitted kitchen cabinets with granite countertop, clean ceramic tiled washroom with high-pressure instant hot shower, and a private rear balcony for laundry drying."
   },
   {
     "id": 3,
     "title": "Spacious Deluxe Bedsitter with Kitchen Cabinets",
     "area": "Kahawa Wendani",
-    "landmark": "Near Cleanshelf Supermarket & Shell Station",
+    "landmark": "Near Clean Shelf Supermarket & Shell Station, Wendani Stage",
     "type": "Bedsitter",
     "floor": "3rd Floor",
     "vacantUnits": 3,
@@ -92,13 +92,13 @@
     ],
     "features": ["Private Balcony", "Instant Hot Shower", "Kitchen Cabinets", "Dedicated Clothes Line Area", "Night Watchman"],
     "rules": ["Payment strictly by 5th", "Garbage bags collected every Tuesday"],
-    "description": "Upper floor bedsitter offering panoramic views and refreshing natural breeze. Spacious interior layout easily accommodating a 4x6 bed, study desk, double wardrobe, and fridge. Fully fitted washroom with shower curtain rod and instant heater."
+    "description": "Upper floor bedsitter offering panoramic views and refreshing natural breeze near Clean Shelf supermarket in Kahawa Wendani. Spacious interior layout easily accommodating a 4x6 bed, study desk, double wardrobe, and fridge."
   },
   {
     "id": 4,
     "title": "Comfort Student Shared Twin Room",
     "area": "Kahawa Sukari",
-    "landmark": "1st South Avenue, near QuickMart Supermarket",
+    "landmark": "Sukari Avenue, near Quickmart Supermarket & 1st South Avenue",
     "type": "Shared room",
     "floor": "Ground Floor",
     "vacantUnits": 1,
@@ -123,13 +123,13 @@
     ],
     "features": ["Spacious Room", "Study Desks Included", "Paved Gated Compound", "WiFi Ready", "Quiet Residential Court"],
     "rules": ["Respect roommate privacy and quiet hours", "Keep shared areas tidy"],
-    "description": "Cost-effective, secure shared accommodation in serene Kahawa Sukari estate. Perfect for budget-conscious students seeking a quiet, focused academic environment. Each tenant has a personal study desk, wardrobe locker, and bed space."
+    "description": "Cost-effective, secure shared accommodation along Sukari Avenue right behind Quickmart in serene Kahawa Sukari. Perfect for budget-conscious students seeking a quiet, focused academic environment."
   },
   {
     "id": 5,
     "title": "Premier Vetted Campus Residence Hostel",
     "area": "Near KU main gate",
-    "landmark": "Directly Opposite Nyayo Hostels Gate",
+    "landmark": "KM behind Modern Furniture, near Madhe & Kiwanja Stage",
     "type": "Hostel",
     "floor": "2nd Floor",
     "vacantUnits": 4,
@@ -154,20 +154,20 @@
     ],
     "features": ["Mattress & Bed Included", "Study Hall & Library", "Full CCTV & Guard", "Hot Showers", "Generator Backup"],
     "rules": ["No alcohol on premises", "Official quiet hours 10 PM - 6 AM"],
-    "description": "Organized student residency just outside the university fence. Comes fully furnished with high-density foam mattress, ergonomic desk chair, and secure steel locker. In-house study lounge, generator backup during blackouts, and hot water showers."
+    "description": "Organized student residency just outside the university fence at KM near Madhe, Kiwanja, and Modern Furniture. Comes fully furnished with high-density foam mattress, ergonomic desk chair, and secure steel locker."
   },
   {
     "id": 6,
     "title": "Budget Single Room in Secure Compound",
-    "area": "Ruiru",
-    "landmark": "Near Ruiru Bypass interchange & Stage",
+    "area": "Near KU main gate",
+    "landmark": "KM Kiwanja, past Transformer on Small Gate road",
     "type": "Single room",
     "floor": "Ground Floor",
     "vacantUnits": 2,
     "rent": 2600,
     "deposit": 2600,
     "garbageFee": 100,
-    "distance": "14 min direct matatu ride to KU (Stage outside)",
+    "distance": "5 min walk to KU Small Gate",
     "water": "Automated Borehole Tap (Always flowing)",
     "electricity": "Fixed monthly flat fee KSh 350",
     "wifi": "WiFi Available on sub-request",
@@ -185,13 +185,13 @@
     ],
     "features": ["Lowest Rent Option", "Outside Verandah", "Large Yard", "Perimeter Wall", "Clean Washrooms"],
     "rules": ["Garbage disposed in designated outdoor bins", "Rent due 1st of month"],
-    "description": "The best value single room for students wanting to minimize monthly living costs. Gated compound with plenty of fresh air, secure perimeter stone wall with razor wire, and direct matatus to KU campus passing right outside the front gate."
+    "description": "The best value single room in KM around Kiwanja near the Small Gate. Gated compound with plenty of fresh air, secure perimeter stone wall with razor wire, and direct walking route into KU campus."
   },
   {
     "id": 7,
     "title": "Modern Executive 1-Bedroom Apartment",
     "area": "Kahawa Sukari",
-    "landmark": "Near Balozi Estate Entrance / Sukari Plaza",
+    "landmark": "Sukari Avenue near Quickmart & Balozi Estate Entrance",
     "type": "1 Bedroom",
     "floor": "1st Floor",
     "vacantUnits": 1,
@@ -217,13 +217,13 @@
     ],
     "features": ["Separate Bedroom", "Large Living Lounge", "Granite Kitchen with Sink", "Car & Bike Parking", "CCTV Cameras"],
     "rules": ["Tenant agreement contract signed on entry", "Quiet residential estate standards"],
-    "description": "Executive one-bedroom residence with distinct living lounge, spacious bedroom with built-in closets, and an American-style open kitchen. Highly recommended for postgraduate researchers, couples, or two friends sharing costs in an upscale neighborhood."
+    "description": "Executive one-bedroom residence along Sukari Avenue near Quickmart with distinct living lounge, spacious bedroom with built-in closets, and an American-style open kitchen."
   },
   {
     "id": 8,
     "title": "Modern Tiled Ceramic Bedsitter with Wi-Fi",
     "area": "Kahawa Wendani",
-    "landmark": "Near Wendani Catholic Church / Nakumatt Stage",
+    "landmark": "Behind Magunas, near Matopeni & Clean Shelf Road",
     "type": "Bedsitter",
     "floor": "2nd Floor",
     "vacantUnits": 2,
@@ -248,6 +248,6 @@
     ],
     "features": ["Ceramic Floor Tiles", "Instant Hot Shower", "Free Fiber Internet", "Night Watchman", "Rooftop Clothes Drying"],
     "rules": ["Rent payable via M-Pesa Paybill", "Compound gates locked at night with guard attendance"],
-    "description": "Extremely popular apartment block favored by KU continuing students. Very short, direct walk into campus through the Nyayo Gate. Ceramic floor tiles, sparkling clean washrooms, high water pressure round the clock, and superfast Wi-Fi included."
+    "description": "Extremely popular apartment block in Kahawa Wendani near Magunas, Matopeni, and Clean Shelf. Very short, direct walk into campus through the Nyayo Gate. Ceramic floor tiles, sparkling clean washrooms, high water pressure round the clock, and superfast Wi-Fi included."
   }
 ]
