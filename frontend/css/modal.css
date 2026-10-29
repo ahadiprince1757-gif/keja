@@ -347,8 +347,14 @@
 }
 
 .spec-icon-wrap {
-  font-size: 1.15rem;
-  line-height: 1;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: #edf5f0;
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
 }
 

@@ -83,7 +83,11 @@ export default function HouseDetailsModal({
               )}
 
               <div className="gallery-counter-badge">
-                📷 {currentImgIdx + 1} / {images.length}
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" style={{ marginRight: '4px' }}>
+                  <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                  <circle cx="12" cy="13" r="4"></circle>
+                </svg>
+                {currentImgIdx + 1} / {images.length}
               </div>
             </div>
 
@@ -112,7 +116,7 @@ export default function HouseDetailsModal({
                 <span className="detail-price-period"> / month</span>
               </div>
               <span className="detail-vacant-badge">
-                ✓ {house.vacantUnits ? `${house.vacantUnits} Unit${house.vacantUnits > 1 ? 's' : ''} Vacant` : 'Available'}
+                {house.vacantUnits ? `${house.vacantUnits} Unit${house.vacantUnits > 1 ? 's' : ''} Vacant` : 'Available'}
               </span>
             </div>
 
@@ -131,7 +135,7 @@ export default function HouseDetailsModal({
           {/* Trust Verification Card */}
           <div className="verified-trust-card">
             <div className="trust-icon">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
                 <polyline points="20 6 9 17 4 12"></polyline>
               </svg>
             </div>
@@ -146,7 +150,12 @@ export default function HouseDetailsModal({
           {/* Clean Quick Specs Grid */}
           <div className="detail-specs-grid">
             <div className="spec-card">
-              <div className="spec-icon-wrap">🏠</div>
+              <div className="spec-icon-wrap">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                  <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+              </div>
               <div className="spec-content">
                 <span className="spec-name">Room Type</span>
                 <span className="spec-value">{house.type}</span>
@@ -154,7 +163,19 @@ export default function HouseDetailsModal({
             </div>
 
             <div className="spec-card">
-              <div className="spec-icon-wrap">🏢</div>
+              <div className="spec-icon-wrap">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                  <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
+                  <line x1="9" y1="22" x2="9" y2="22.01"></line>
+                  <line x1="15" y1="22" x2="15" y2="22.01"></line>
+                  <line x1="9" y1="6" x2="9" y2="6.01"></line>
+                  <line x1="15" y1="6" x2="15" y2="6.01"></line>
+                  <line x1="9" y1="10" x2="9" y2="10.01"></line>
+                  <line x1="15" y1="10" x2="15" y2="10.01"></line>
+                  <line x1="9" y1="14" x2="9" y2="14.01"></line>
+                  <line x1="15" y1="14" x2="15" y2="14.01"></line>
+                </svg>
+              </div>
               <div className="spec-content">
                 <span className="spec-name">Floor Level</span>
                 <span className="spec-value">{house.floor || '1st Floor'}</span>
@@ -162,7 +183,12 @@ export default function HouseDetailsModal({
             </div>
 
             <div className="spec-card">
-              <div className="spec-icon-wrap">🚶</div>
+              <div className="spec-icon-wrap">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+              </div>
               <div className="spec-content">
                 <span className="spec-name">Campus Distance</span>
                 <span className="spec-value">{house.distance}</span>
@@ -170,7 +196,12 @@ export default function HouseDetailsModal({
             </div>
 
             <div className="spec-card">
-              <div className="spec-icon-wrap">🔑</div>
+              <div className="spec-icon-wrap">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                  <path d="M21 2l-2 2m-1.5 1.5L14 9l-1.5-1.5-3 3 1.5 1.5L9 14l-1.5-1.5-3 3 1.5 1.5-2 2"></path>
+                  <circle cx="7.5" cy="16.5" r="4.5"></circle>
+                </svg>
+              </div>
               <div className="spec-content">
                 <span className="spec-name">Gate Access</span>
                 <span className="spec-value">{house.gateCurfew || 'Resident Key'}</span>

@@ -188,7 +188,12 @@ export default function HomePage() {
             <div className="listings-grid" id="listingsGrid">
               {filteredHouses.length === 0 ? (
                 <div className="no-results-card">
-                  <div className="no-results-icon">🔍</div>
+                  <div className="no-results-icon">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <circle cx="11" cy="11" r="8"></circle>
+                      <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                  </div>
                   <h3 className="no-results-title">No houses match "{filters.keyword || 'your filters'}"</h3>
                   <p className="no-results-subtitle">
                     Try searching for different spots around KU or click a popular area below:
