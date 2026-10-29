@@ -86,7 +86,8 @@ function addHouse(houseData) {
     rules: Array.isArray(houseData.rules)
       ? houseData.rules
       : ['No loud music after 10 PM', 'Guests permitted with notification', 'Prompt rent payment by 5th'],
-    description: houseData.description || 'Spacious, well-ventilated student housing with reliable water supply and security.'
+    description: houseData.description || 'Spacious, well-ventilated student housing with reliable water supply and security.',
+    ownerId: houseData.ownerId || null
   };
 
   houses.unshift(newHouse);
@@ -94,8 +95,41 @@ function addHouse(houseData) {
   return newHouse;
 }
 
+/**
+ * Update an existing house by ID (partial update).
+ * @param {number|string} id
+ * @param {Object} updates
+ * @returns {Object|null}
+ */
+function updateHouse(id, updates) {
+  const houses = getAllHouses();
+  const idx = houses.findIndex(h => h.id === Number(id));
+  if (idx === -1) return null;
+
+  // Merge update but never override id
+  const { id: _id, ownerId: _ownerId, ...safeUpdates } = updates;
+  houses[idx] = { ...houses[idx], ...safeUpdates };
+  saveHouses(houses);
+  return houses[idx];
+}
+
+/**
+ * Delete a house by ID.
+ * @param {number|string} id
+ * @returns {boolean}
+ */
+function deleteHouse(id) {
+  const houses = getAllHouses();
+  const idx = houses.findIndex(h => h.id === Number(id));
+  if (idx === -1) return false;
+  houses.splice(idx, 1);
+  return saveHouses(houses);
+}
+
 module.exports = {
   getAllHouses,
   getHouseById,
-  addHouse
+  addHouse,
+  updateHouse,
+  deleteHouse
 };

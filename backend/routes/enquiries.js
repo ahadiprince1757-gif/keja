@@ -40,14 +40,19 @@ router.post('/', (req, res) => {
   }
 
   const enquiry = {
-    id: Date.now(),
+    id: `enq_${Date.now()}`,
     houseId,
     houseTitle,
     studentName,
     studentPhone,
     viewingDate: viewingDate || null,
     message: message || '',
-    createdAt: new Date().toISOString()
+    status: 'open',
+    messages: message
+      ? [{ from: 'customer', senderName: studentName, text: message, at: new Date().toISOString() }]
+      : [],
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
   };
 
   const enquiries = getEnquiries();

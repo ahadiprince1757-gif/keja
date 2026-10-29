@@ -17,8 +17,13 @@ export default function EnquiryModal({ house, onClose, onSubmitSuccess }) {
     `Hello ${house.caretaker || 'Caretaker'}, I would like to book an in-person viewing for "${house.title}" located in ${house.area} (${formatMoney(house.rent)}/mo).`
   )}`;
 
-  const handleSubmit = (e) => {
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    if (submitting) return;
+    setSubmitting(true);
+
     const payload = {
       houseId: house.id,
       houseTitle: house.title,
@@ -28,9 +33,24 @@ export default function EnquiryModal({ house, onClose, onSubmitSuccess }) {
       message
     };
 
-    // Viewing booking submitted
-    onSubmitSuccess(`Viewing request confirmed! ${house.caretaker || 'The caretaker'} has been notified.`);
-    onClose();
+    try {
+      const res = await fetch('/api/enquiries', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (data.success) {
+        onSubmitSuccess(`Viewing request sent! ${house.caretaker || 'The caretaker'} has been notified.`);
+      } else {
+        onSubmitSuccess(`Viewing request submitted for ${house.caretaker || 'caretaker'}.`);
+      }
+    } catch {
+      onSubmitSuccess(`Viewing request submitted!`);
+    } finally {
+      setSubmitting(false);
+      onClose();
+    }
   };
 
   return (
@@ -119,8 +139,13 @@ export default function EnquiryModal({ house, onClose, onSubmitSuccess }) {
               />
             </div>
 
-            <button type="submit" className="btn btn-primary" style={{ width: '100%', padding: '13px', fontWeight: 700 }}>
-              Submit Viewing Booking
+            <button
+              type="submit"
+              className="btn btn-primary"
+              disabled={submitting}
+              style={{ width: '100%', padding: '13px', fontWeight: 700 }}
+            >
+              {submitting ? 'Submitting…' : 'Submit Viewing Booking'}
             </button>
           </form>
         </div>

@@ -7,11 +7,19 @@
     "start": "node server.js",
     "dev": "node --watch server.js"
   },
-  "keywords": ["student-housing", "kenya", "kenyatta-university", "express", "api"],
+  "keywords": [
+    "student-housing",
+    "kenya",
+    "kenyatta-university",
+    "express",
+    "api"
+  ],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bcryptjs": "^3.0.3",
     "cors": "^2.8.5",
-    "express": "^4.21.1"
+    "express": "^4.21.1",
+    "jsonwebtoken": "^9.0.3"
   }
 }

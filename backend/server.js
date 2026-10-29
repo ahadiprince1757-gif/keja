@@ -2,7 +2,10 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 
-const housesRouter = require('./routes/houses');
+const housesRouter    = require('./routes/houses');
+const authRouter      = require('./routes/auth');
+const accountsRouter  = require('./routes/accounts');
+const enquiriesRouter = require('./routes/enquiries');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -12,8 +15,11 @@ app.use(cors());
 app.use(express.json({ limit: '25mb' }));
 app.use(express.urlencoded({ extended: true, limit: '25mb' }));
 
-// Single unified API Route
-app.use('/api/houses', housesRouter);
+// API Routes
+app.use('/api/houses',    housesRouter);
+app.use('/api/auth',      authRouter);
+app.use('/api/accounts',  accountsRouter);
+app.use('/api/enquiries', enquiriesRouter);
 
 // Statically serve frontend files
 const frontendPath = path.join(__dirname, '../frontend');

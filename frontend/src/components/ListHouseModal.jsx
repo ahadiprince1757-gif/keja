@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
+import { useAuth } from '../context/AuthContext';
 
 export default function ListHouseModal({ onClose, onHouseCreated }) {
+  const { user, authFetch, isLoggedIn } = useAuth();
   const [title, setTitle] = useState('');
   const [area, setArea] = useState('');
   const [type, setType] = useState('Bedsitter');
@@ -14,13 +16,14 @@ export default function ListHouseModal({ onClose, onHouseCreated }) {
   const [electricity, setElectricity] = useState('Individual Prepaid KPLC Token Meter');
   const [wifi, setWifi] = useState('Free Fiber WiFi Included');
   const [gateCurfew, setGateCurfew] = useState('Open 24/7 (Resident Key Provided)');
-  const [caretaker, setCaretaker] = useState('');
-  const [phone, setPhone] = useState('');
+  const [caretaker, setCaretaker] = useState(user?.name || '');
+  const [phone, setPhone] = useState(user?.phone || '');
   const [description, setDescription] = useState('');
   
   const [uploadedPhotos, setUploadedPhotos] = useState([]);
   const [singleUrl, setSingleUrl] = useState('');
   const [isDragOver, setIsDragOver] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   const handleFiles = (files) => {
     if (!files || files.length === 0) return;
@@ -45,8 +48,10 @@ export default function ListHouseModal({ onClose, onHouseCreated }) {
     setUploadedPhotos((prev) => prev.filter((_, i) => i !== idx));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    if (submitting) return;
+    setSubmitting(true);
 
     const finalImages = uploadedPhotos.length > 0
       ? uploadedPhotos
@@ -68,9 +73,9 @@ export default function ListHouseModal({ onClose, onHouseCreated }) {
       electricity,
       wifi,
       gateCurfew,
-      caretaker,
-      phone,
-      whatsapp: phone,
+      caretaker: caretaker || user?.name || 'Resident Caretaker',
+      phone: phone || user?.phone || '0712345678',
+      whatsapp: phone || user?.phone || '0712345678',
       status: 'visited',
       verifiedDate: 'New Listing',
       image: finalImages[0],
@@ -79,11 +84,30 @@ export default function ListHouseModal({ onClose, onHouseCreated }) {
       description
     };
 
-    fetch('/api/houses', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(newHouse)
-    }).catch(() => {});
+    try {
+      if (isLoggedIn) {
+        const res = await authFetch('/api/accounts/me/houses', {
+          method: 'POST',
+          body: JSON.stringify(newHouse)
+        });
+        const data = await res.json();
+        if (data.success && data.data) {
+          onHouseCreated(data.data);
+          onClose();
+          return;
+        }
+      } else {
+        await fetch('/api/houses', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(newHouse)
+        });
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setSubmitting(false);
+    }
 
     onHouseCreated(newHouse);
     onClose();
