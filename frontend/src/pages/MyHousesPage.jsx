@@ -37,7 +37,7 @@ export default function MyHousesPage() {
       const data = await res.json();
       if (data.success) {
         setHouses(prev => prev.filter(h => h.id !== house.id));
-        showToast('Listing deleted.');
+        showToast('House deleted.');
       }
     } catch { /* ignore */ }
     finally { setDeletingId(null); }
@@ -46,13 +46,13 @@ export default function MyHousesPage() {
   const handleUpdated = (updated) => {
     setHouses(prev => prev.map(h => h.id === updated.id ? updated : h));
     setEditTarget(null);
-    showToast('Listing updated successfully!');
+    showToast('House updated successfully!');
   };
 
   const handleAdded = (newHouse) => {
     setHouses(prev => [newHouse, ...prev]);
     setShowAdd(false);
-    showToast('New listing published!');
+    showToast('New house added!');
   };
 
   return (
@@ -71,7 +71,7 @@ export default function MyHousesPage() {
       )}
 
       <div className="section-header">
-        <h2 className="section-title">My Listings ({houses.length})</h2>
+        <h2 className="section-title">My Houses ({houses.length})</h2>
         <button
           type="button"
           className="btn btn-primary"
@@ -79,28 +79,28 @@ export default function MyHousesPage() {
           onClick={() => setShowAdd(true)}
           style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}
         >
-          <Plus size={16} strokeWidth={2.5} /> Add New Listing
+          <Plus size={16} strokeWidth={2.5} /> Add House
         </button>
       </div>
 
       {loading ? (
         <div style={{ padding: 48, textAlign: 'center', color: 'var(--text-muted)' }}>
-          Loading your listings…
+          Loading your houses…
         </div>
       ) : houses.length === 0 ? (
         <div className="empty-state">
           <div className="empty-state-icon" style={{ display: 'flex', justifyContent: 'center' }}>
             <Building size={48} strokeWidth={1.5} color="var(--primary)" />
           </div>
-          <h3>No listings yet</h3>
-          <p>You haven't listed any properties. Add your first one!</p>
+          <h3>No houses added yet</h3>
+          <p>You haven't added any houses. Add your first house now!</p>
           <button
             type="button"
             className="btn btn-primary"
             onClick={() => setShowAdd(true)}
             style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}
           >
-            <Plus size={16} strokeWidth={2.5} /> Add Your First Listing
+            <Plus size={16} strokeWidth={2.5} /> Add House
           </button>
         </div>
       ) : (

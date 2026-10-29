@@ -29,8 +29,8 @@ router.post('/register', async (req, res) => {
       return res.status(400).json({ success: false, error: 'Invalid email address.' });
     }
 
-    // Check for duplicate
-    const existing = getAccountByEmail(email);
+    // Check for duplicate in Supabase
+    const existing = await getAccountByEmail(email);
     if (existing) {
       return res.status(409).json({ success: false, error: 'An account with this email already exists.' });
     }
@@ -38,8 +38,8 @@ router.post('/register', async (req, res) => {
     // Hash password
     const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
 
-    // Create account
-    const account = addAccount({ name, email, phone, passwordHash });
+    // Create account in Supabase
+    const account = await addAccount({ name, email, phone, passwordHash });
 
     // Issue token
     const token = jwt.sign(
@@ -67,7 +67,7 @@ router.post('/login', async (req, res) => {
       return res.status(400).json({ success: false, error: 'Email and password are required.' });
     }
 
-    const account = getAccountByEmail(email);
+    const account = await getAccountByEmail(email);
     if (!account) {
       return res.status(401).json({ success: false, error: 'Invalid email or password.' });
     }
@@ -96,9 +96,9 @@ router.post('/login', async (req, res) => {
  * GET /api/auth/me
  * Returns current authenticated user's profile.
  */
-router.get('/me', requireAuth, (req, res) => {
+router.get('/me', requireAuth, async (req, res) => {
   try {
-    const account = getAccountById(req.user.id);
+    const account = await getAccountById(req.user.id);
     if (!account) {
       return res.status(404).json({ success: false, error: 'Account not found.' });
     }

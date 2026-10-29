@@ -6,7 +6,7 @@ import { LayoutDashboard, Building2, MessageSquare, UserCheck } from 'lucide-rea
 const NAV_ITEMS = [
   { path: '/dashboard',           icon: LayoutDashboard, label: 'Overview'   },
   { path: '/dashboard/houses',    icon: Building2,       label: 'My Houses'  },
-  { path: '/dashboard/enquiries', icon: MessageSquare,   label: 'Enquiries'  },
+  { path: '/dashboard/enquiries', icon: MessageSquare,   label: 'Messages'   },
   { path: '/dashboard/profile',   icon: UserCheck,       label: 'Profile'    },
 ];
 

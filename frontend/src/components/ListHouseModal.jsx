@@ -20,6 +20,41 @@ export default function ListHouseModal({ onClose, onHouseCreated }) {
   const [phone, setPhone] = useState(user?.phone || '');
   const [description, setDescription] = useState('');
   
+  const POPULAR_FEATURES = [
+    'Borehole Water',
+    'Token Meter',
+    'Tiled Floor',
+    'Instant Hot Shower',
+    'Free High-Speed WiFi',
+    'CCTV Security',
+    'Perimeter Wall & Gate',
+    'Balcony',
+    'Kitchen Sink & Cabinets'
+  ];
+  const [selectedFeatures, setSelectedFeatures] = useState([
+    'Borehole Water',
+    'Token Meter',
+    'Tiled Floor'
+  ]);
+  const [customFeature, setCustomFeature] = useState('');
+  const [rulesText, setRulesText] = useState(
+    'Quiet hours observed after 10 PM\nRent due on the 5th of every month\nClean shared areas after use'
+  );
+
+  const toggleFeature = (feat) => {
+    setSelectedFeatures(prev =>
+      prev.includes(feat) ? prev.filter(f => f !== feat) : [...prev, feat]
+    );
+  };
+
+  const addCustomFeature = () => {
+    const trimmed = customFeature.trim();
+    if (trimmed && !selectedFeatures.includes(trimmed)) {
+      setSelectedFeatures(prev => [...prev, trimmed]);
+      setCustomFeature('');
+    }
+  };
+
   const [uploadedPhotos, setUploadedPhotos] = useState([]);
   const [singleUrl, setSingleUrl] = useState('');
   const [isDragOver, setIsDragOver] = useState(false);
@@ -57,6 +92,11 @@ export default function ListHouseModal({ onClose, onHouseCreated }) {
       ? uploadedPhotos
       : ['https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1200&q=80'];
 
+    const rulesArray = rulesText
+      .split('\n')
+      .map(r => r.trim())
+      .filter(Boolean);
+
     const newHouse = {
       id: Date.now(),
       title,
@@ -80,7 +120,8 @@ export default function ListHouseModal({ onClose, onHouseCreated }) {
       verifiedDate: 'New Listing',
       image: finalImages[0],
       images: finalImages,
-      features: ['Borehole Water', 'Token Meter', 'Tiled Floor', 'Verified Listing'],
+      features: selectedFeatures,
+      rules: rulesArray,
       description
     };
 
@@ -117,7 +158,7 @@ export default function ListHouseModal({ onClose, onHouseCreated }) {
     <div className="modal-backdrop open" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
       <div className="modal-container" style={{ maxWidth: '680px' }}>
         <div className="modal-header">
-          <h2>List a House on Keja</h2>
+          <h2>Add House</h2>
           <button type="button" className="modal-close-btn" onClick={onClose} aria-label="Close dialog">
             ×
           </button>
@@ -125,12 +166,12 @@ export default function ListHouseModal({ onClose, onHouseCreated }) {
 
         <div className="modal-body">
           <p style={{ color: 'var(--text-secondary)', fontSize: '0.92rem', marginBottom: '18px' }}>
-            List your student property on Keja. Include accurate photos, walking time to KU gates, and true rental rates.
+            Add your house on Keja. Include photos, walking time to KU gates, and rent.
           </p>
 
           <form onSubmit={handleSubmit}>
             <div className="form-field">
-              <label className="form-label" htmlFor="newHouseTitle">Listing Headline</label>
+              <label className="form-label" htmlFor="newHouseTitle">House Title</label>
               <input
                 type="text"
                 id="newHouseTitle"
@@ -413,6 +454,74 @@ export default function ListHouseModal({ onClose, onHouseCreated }) {
             </div>
 
             <div className="form-field">
+              <label className="form-label">Features & Amenities (Select all that apply)</label>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '10px' }}>
+                {POPULAR_FEATURES.map((feat) => {
+                  const isSelected = selectedFeatures.includes(feat);
+                  return (
+                    <button
+                      key={feat}
+                      type="button"
+                      onClick={() => toggleFeature(feat)}
+                      style={{
+                        padding: '6px 12px',
+                        borderRadius: '20px',
+                        fontSize: '0.85rem',
+                        fontWeight: 600,
+                        border: isSelected ? '1.5px solid var(--primary)' : '1px solid var(--border-subtle)',
+                        backgroundColor: isSelected ? 'var(--primary-light, #e8f5ee)' : 'var(--bg-surface, #fff)',
+                        color: isSelected ? 'var(--primary)' : 'var(--text-main)',
+                        cursor: 'pointer',
+                        transition: 'all 0.15s ease'
+                      }}
+                    >
+                      {isSelected ? '✓ ' : '+ '}{feat}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Custom Feature Input */}
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <input
+                  type="text"
+                  className="input-control"
+                  placeholder="Or type a custom feature..."
+                  value={customFeature}
+                  onChange={(e) => setCustomFeature(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      addCustomFeature();
+                    }
+                  }}
+                />
+                <button
+                  type="button"
+                  className="btn"
+                  onClick={addCustomFeature}
+                  style={{ whiteSpace: 'nowrap' }}
+                >
+                  + Add Feature
+                </button>
+              </div>
+            </div>
+
+            <div className="form-field">
+              <label className="form-label" htmlFor="newHouseRules">
+                Building Regulations (One rule per line)
+              </label>
+              <textarea
+                id="newHouseRules"
+                rows="3"
+                className="input-control"
+                placeholder="e.g. Quiet study hours after 10 PM&#10;Rent due by the 5th of each month&#10;Guests allowed with notification"
+                value={rulesText}
+                onChange={(e) => setRulesText(e.target.value)}
+              />
+            </div>
+
+            <div className="form-field">
               <label className="form-label" htmlFor="newHouseDescription">Detailed Description</label>
               <textarea
                 id="newHouseDescription"
@@ -426,7 +535,7 @@ export default function ListHouseModal({ onClose, onHouseCreated }) {
             </div>
 
             <button type="submit" className="btn btn-primary" style={{ width: '100%', padding: '14px', fontWeight: 700 }}>
-              Publish Property Listing
+              Add House
             </button>
           </form>
         </div>

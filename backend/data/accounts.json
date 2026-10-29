@@ -1,0 +1,15 @@
+[
+  {
+    "id": "acc_1793273752199",
+    "name": "John Kamau",
+    "email": "kamau@test.com",
+    "passwordHash": "$2b$12$goqEgY3kdJZaCjGcIW6Ox.nV0/jXW4MLiUBwlrE2Lgo9OSvE7VYne",
+    "phone": "0712345678",
+    "role": "owner",
+    "houseIds": [
+      1793276188201
+    ],
+    "avatar": null,
+    "createdAt": "2026-10-29T11:35:52.199Z"
+  }
+]

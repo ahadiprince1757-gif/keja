@@ -47,20 +47,20 @@ export default function EnquiryChatPage() {
   return (
     <div>
       <div className="section-header" style={{ marginBottom: 20 }}>
-        <h2 className="section-title">Enquiries ({enquiries.length})</h2>
+        <h2 className="section-title">Messages ({enquiries.length})</h2>
       </div>
 
       {loading ? (
         <div style={{ padding: 48, textAlign: 'center', color: 'var(--text-muted)' }}>
-          Loading enquiries…
+          Loading messages…
         </div>
       ) : enquiries.length === 0 ? (
         <div className="empty-state">
           <div className="empty-state-icon" style={{ display: 'flex', justifyContent: 'center' }}>
             <MessageSquare size={48} strokeWidth={1.5} color="var(--primary)" />
           </div>
-          <h3>No enquiries yet</h3>
-          <p>When students enquire about your listings, the conversations will appear here.</p>
+          <h3>No messages yet</h3>
+          <p>When students send messages about your houses, the conversations will appear here.</p>
         </div>
       ) : (
         <div className="enquiry-chat-layout">

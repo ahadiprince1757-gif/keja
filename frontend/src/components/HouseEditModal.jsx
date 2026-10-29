@@ -22,6 +22,41 @@ export default function HouseEditModal({ house, onClose, onUpdated }) {
     phone:       house.phone || '',
     whatsapp:    house.whatsapp || '',
   });
+
+  const POPULAR_FEATURES = [
+    'Borehole Water',
+    'Token Meter',
+    'Tiled Floor',
+    'Instant Hot Shower',
+    'Free High-Speed WiFi',
+    'CCTV Security',
+    'Perimeter Wall & Gate',
+    'Balcony',
+    'Kitchen Sink & Cabinets'
+  ];
+
+  const [selectedFeatures, setSelectedFeatures] = useState(
+    Array.isArray(house.features) ? house.features : []
+  );
+  const [customFeature, setCustomFeature] = useState('');
+  const [rulesText, setRulesText] = useState(
+    Array.isArray(house.rules) ? house.rules.join('\n') : ''
+  );
+
+  const toggleFeature = (feat) => {
+    setSelectedFeatures(prev =>
+      prev.includes(feat) ? prev.filter(f => f !== feat) : [...prev, feat]
+    );
+  };
+
+  const addCustomFeature = () => {
+    const trimmed = customFeature.trim();
+    if (trimmed && !selectedFeatures.includes(trimmed)) {
+      setSelectedFeatures(prev => [...prev, trimmed]);
+      setCustomFeature('');
+    }
+  };
+
   const [loading, setLoading] = useState(false);
   const [error, setError]     = useState('');
 
@@ -35,6 +70,11 @@ export default function HouseEditModal({ house, onClose, onUpdated }) {
     setError('');
     setLoading(true);
 
+    const rulesArray = rulesText
+      .split('\n')
+      .map(r => r.trim())
+      .filter(Boolean);
+
     try {
       const res  = await authFetch(`/api/accounts/me/houses/${house.id}`, {
         method: 'PUT',
@@ -43,6 +83,8 @@ export default function HouseEditModal({ house, onClose, onUpdated }) {
           rent:        Number(form.rent),
           deposit:     Number(form.deposit),
           vacantUnits: Number(form.vacantUnits),
+          features:    selectedFeatures,
+          rules:       rulesArray,
         }),
       });
       const data = await res.json();
@@ -122,6 +164,72 @@ export default function HouseEditModal({ house, onClose, onUpdated }) {
           <div className="form-group">
             <label htmlFor="edit-description">Description</label>
             <textarea id="edit-description" name="description" className="form-input" rows={3} value={form.description} onChange={handleChange} style={{ resize: 'vertical' }} placeholder="Describe the property…" />
+          </div>
+
+          <div className="form-group">
+            <label>Features & Amenities</label>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '10px' }}>
+              {POPULAR_FEATURES.map((feat) => {
+                const isSelected = selectedFeatures.includes(feat);
+                return (
+                  <button
+                    key={feat}
+                    type="button"
+                    onClick={() => toggleFeature(feat)}
+                    style={{
+                      padding: '5px 11px',
+                      borderRadius: '20px',
+                      fontSize: '0.82rem',
+                      fontWeight: 600,
+                      border: isSelected ? '1.5px solid var(--primary)' : '1px solid var(--border-subtle)',
+                      backgroundColor: isSelected ? 'var(--primary-light, #e8f5ee)' : 'var(--bg-surface, #fff)',
+                      color: isSelected ? 'var(--primary)' : 'var(--text-main)',
+                      cursor: 'pointer',
+                      transition: 'all 0.15s ease'
+                    }}
+                  >
+                    {isSelected ? '✓ ' : '+ '}{feat}
+                  </button>
+                );
+              })}
+            </div>
+
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <input
+                type="text"
+                className="form-input"
+                placeholder="Or custom feature..."
+                value={customFeature}
+                onChange={(e) => setCustomFeature(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    addCustomFeature();
+                  }
+                }}
+              />
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={addCustomFeature}
+                style={{ whiteSpace: 'nowrap', padding: '6px 12px', fontSize: '0.85rem' }}
+              >
+                + Add
+              </button>
+            </div>
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="edit-rules">Building Regulations (One rule per line)</label>
+            <textarea
+              id="edit-rules"
+              className="form-input"
+              rows={3}
+              value={rulesText}
+              onChange={(e) => setRulesText(e.target.value)}
+              style={{ resize: 'vertical' }}
+              placeholder="e.g. Quiet hours after 10 PM&#10;Rent due by the 5th of each month"
+            />
           </div>
 
           <div className="form-row">

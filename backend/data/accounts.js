@@ -1,116 +1,138 @@
-const fs = require('fs');
-const path = require('path');
-
-const DATA_FILE = path.join(__dirname, 'accounts.json');
+const supabase = require('../supabase');
 
 /**
- * Ensure the accounts JSON file exists with an empty array.
+ * Format database record (snake_case) to application object (camelCase)
  */
-function ensureFile() {
-  if (!fs.existsSync(DATA_FILE)) {
-    fs.writeFileSync(DATA_FILE, '[]', 'utf8');
-  }
+function formatAccount(row) {
+  if (!row) return null;
+  return {
+    id: row.id,
+    name: row.name,
+    email: row.email,
+    passwordHash: row.password_hash,
+    phone: row.phone,
+    role: row.role || 'owner',
+    houseIds: row.house_ids || [],
+    avatar: row.avatar || null,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+  };
 }
 
 /**
- * Read all accounts from disk.
- * @returns {Array}
- */
-function getAllAccounts() {
-  try {
-    ensureFile();
-    const data = fs.readFileSync(DATA_FILE, 'utf8');
-    return JSON.parse(data || '[]');
-  } catch (error) {
-    console.error('Error reading accounts data:', error);
-    return [];
-  }
-}
-
-/**
- * Persist all accounts to disk.
- * @param {Array} accounts
- */
-function saveAccounts(accounts) {
-  try {
-    fs.writeFileSync(DATA_FILE, JSON.stringify(accounts, null, 2), 'utf8');
-    return true;
-  } catch (error) {
-    console.error('Error saving accounts data:', error);
-    return false;
-  }
-}
-
-/**
- * Find an account by email (case-insensitive).
+ * Find an account by email (case-insensitive)
  * @param {string} email
- * @returns {Object|undefined}
+ * @returns {Promise<Object|null>}
  */
-function getAccountByEmail(email) {
-  const accounts = getAllAccounts();
-  return accounts.find(a => a.email.toLowerCase() === email.toLowerCase());
+async function getAccountByEmail(email) {
+  try {
+    const { data, error } = await supabase
+      .from('accounts')
+      .select('*')
+      .ilike('email', email.trim())
+      .maybeSingle();
+
+    if (error) {
+      console.error('Error fetching account by email:', error.message);
+      return null;
+    }
+    return formatAccount(data);
+  } catch (err) {
+    console.error('getAccountByEmail unexpected error:', err);
+    return null;
+  }
 }
 
 /**
- * Find an account by ID.
+ * Find an account by ID
  * @param {string} id
- * @returns {Object|undefined}
+ * @returns {Promise<Object|null>}
  */
-function getAccountById(id) {
-  const accounts = getAllAccounts();
-  return accounts.find(a => a.id === id);
+async function getAccountById(id) {
+  try {
+    const { data, error } = await supabase
+      .from('accounts')
+      .select('*')
+      .eq('id', id)
+      .maybeSingle();
+
+    if (error) {
+      console.error('Error fetching account by id:', error.message);
+      return null;
+    }
+    return formatAccount(data);
+  } catch (err) {
+    console.error('getAccountById unexpected error:', err);
+    return null;
+  }
 }
 
 /**
- * Create a new account.
+ * Create a new account in Supabase
  * @param {Object} data - { name, email, passwordHash, phone }
- * @returns {Object} created account (without passwordHash)
+ * @returns {Promise<Object>} created account (without passwordHash)
  */
-function addAccount(data) {
-  const accounts = getAllAccounts();
-
-  const newAccount = {
-    id: `acc_${Date.now()}`,
+async function addAccount(data) {
+  const id = `acc_${Date.now()}`;
+  const insertPayload = {
+    id,
     name: (data.name || '').trim(),
     email: data.email.toLowerCase().trim(),
-    passwordHash: data.passwordHash,
+    password_hash: data.passwordHash,
     phone: (data.phone || '').trim(),
     role: 'owner',
-    houseIds: [],
+    house_ids: [],
     avatar: null,
-    createdAt: new Date().toISOString(),
   };
 
-  accounts.push(newAccount);
-  saveAccounts(accounts);
+  const { data: created, error } = await supabase
+    .from('accounts')
+    .insert([insertPayload])
+    .select()
+    .single();
 
-  // Return safe version (no passwordHash)
-  const { passwordHash, ...safe } = newAccount;
+  if (error) {
+    console.error('Error adding account to Supabase:', error.message);
+    throw new Error(error.message);
+  }
+
+  const formatted = formatAccount(created);
+  const { passwordHash, ...safe } = formatted;
   return safe;
 }
 
 /**
- * Update an account's fields (partial update).
+ * Update an account's fields
  * @param {string} id
  * @param {Object} updates
- * @returns {Object|null} updated safe account or null
+ * @returns {Promise<Object|null>} updated safe account or null
  */
-function updateAccount(id, updates) {
-  const accounts = getAllAccounts();
-  const idx = accounts.findIndex(a => a.id === id);
-  if (idx === -1) return null;
+async function updateAccount(id, updates) {
+  const dbUpdates = {};
+  if (updates.name !== undefined) dbUpdates.name = updates.name.trim();
+  if (updates.phone !== undefined) dbUpdates.phone = updates.phone.trim();
+  if (updates.avatar !== undefined) dbUpdates.avatar = updates.avatar;
+  if (updates.houseIds !== undefined) dbUpdates.house_ids = updates.houseIds;
+  dbUpdates.updated_at = new Date().toISOString();
 
-  // Never allow overwriting id or passwordHash through this function
-  const { id: _id, passwordHash: _ph, ...safeUpdates } = updates;
-  accounts[idx] = { ...accounts[idx], ...safeUpdates };
-  saveAccounts(accounts);
+  const { data, error } = await supabase
+    .from('accounts')
+    .update(dbUpdates)
+    .eq('id', id)
+    .select()
+    .single();
 
-  const { passwordHash, ...safe } = accounts[idx];
+  if (error) {
+    console.error('Error updating account in Supabase:', error.message);
+    return null;
+  }
+
+  const formatted = formatAccount(data);
+  const { passwordHash, ...safe } = formatted;
   return safe;
 }
 
 module.exports = {
-  getAllAccounts,
   getAccountByEmail,
   getAccountById,
   addAccount,

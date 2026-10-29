@@ -25,7 +25,7 @@ function OverviewPage({ stats }) {
         {greeting()}, {user?.name?.split(' ')[0]}
       </h2>
       <p style={{ color: 'var(--text-secondary)', marginBottom: 28, fontSize: '0.9rem' }}>
-        Here's what's happening with your listings today.
+        Here's what's happening with your houses today.
       </p>
 
       <div className="stats-grid">
@@ -34,21 +34,21 @@ function OverviewPage({ stats }) {
             <Building2 size={24} />
           </div>
           <div className="stat-value">{stats.houses}</div>
-          <div className="stat-label">Active Listings</div>
+          <div className="stat-label">Total Houses</div>
         </div>
         <div className="stat-card">
           <div className="stat-icon amber" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <MessageSquare size={24} />
           </div>
           <div className="stat-value">{stats.enquiries}</div>
-          <div className="stat-label">Total Enquiries</div>
+          <div className="stat-label">Total Messages</div>
         </div>
         <div className="stat-card">
           <div className="stat-icon blue" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <Mail size={24} />
           </div>
           <div className="stat-value">{stats.open}</div>
-          <div className="stat-label">Open (Unread)</div>
+          <div className="stat-label">Unread Messages</div>
         </div>
       </div>
 
@@ -63,8 +63,8 @@ function OverviewPage({ stats }) {
           <div style={{ color: 'var(--primary)', marginBottom: 8, display: 'flex', alignItems: 'center' }}>
             <Building2 size={30} strokeWidth={2.2} />
           </div>
-          <div style={{ fontWeight: 700, color: 'var(--text-main)' }}>Manage Listings</div>
-          <div style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', marginTop: 4 }}>Add, edit or remove your properties</div>
+          <div style={{ fontWeight: 700, color: 'var(--text-main)' }}>My Houses</div>
+          <div style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', marginTop: 4 }}>Add, edit or remove your houses</div>
         </button>
         <button
           type="button"
@@ -76,7 +76,7 @@ function OverviewPage({ stats }) {
           <div style={{ color: 'var(--primary)', marginBottom: 8, display: 'flex', alignItems: 'center' }}>
             <MessageSquare size={30} strokeWidth={2.2} />
           </div>
-          <div style={{ fontWeight: 700, color: 'var(--text-main)' }}>View Enquiries</div>
+          <div style={{ fontWeight: 700, color: 'var(--text-main)' }}>View Messages</div>
           <div style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', marginTop: 4 }}>Reply to student messages</div>
         </button>
       </div>
@@ -88,7 +88,7 @@ function OverviewPage({ stats }) {
 const TITLES = {
   '/dashboard':           'Overview',
   '/dashboard/houses':    'My Houses',
-  '/dashboard/enquiries': 'Enquiries',
+  '/dashboard/enquiries': 'Messages',
   '/dashboard/profile':   'Profile',
 };
 

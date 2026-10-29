@@ -26,13 +26,13 @@ function saveEnquiries(enquiries) {
  * GET /api/accounts/me/houses
  * All houses belonging to the authenticated owner.
  */
-router.get('/me/houses', requireAuth, (req, res) => {
+router.get('/me/houses', requireAuth, async (req, res) => {
   try {
-    const all = getAllHouses();
+    const all = await getAllHouses();
     const mine = all.filter(h => h.ownerId === req.user.id);
     res.json({ success: true, count: mine.length, data: mine });
   } catch (error) {
-    res.status(500).json({ success: false, error: 'Failed to fetch your listings.' });
+    res.status(500).json({ success: false, error: 'Failed to fetch your houses.' });
   }
 });
 
@@ -40,25 +40,25 @@ router.get('/me/houses', requireAuth, (req, res) => {
  * POST /api/accounts/me/houses
  * Create a house under the authenticated owner.
  */
-router.post('/me/houses', requireAuth, (req, res) => {
+router.post('/me/houses', requireAuth, async (req, res) => {
   try {
     const { title, area, type, rent } = req.body;
     if (!title || !area || !type || !rent) {
       return res.status(400).json({ success: false, error: 'title, area, type, and rent are required.' });
     }
-    const created = addHouse({ ...req.body, ownerId: req.user.id });
+    const created = await addHouse({ ...req.body, ownerId: req.user.id });
 
     // Add houseId to owner's account
-    const account = getAccountById(req.user.id);
+    const account = await getAccountById(req.user.id);
     if (account) {
       const newIds = [...(account.houseIds || []), created.id];
-      updateAccount(req.user.id, { houseIds: newIds });
+      await updateAccount(req.user.id, { houseIds: newIds });
     }
 
     res.status(201).json({ success: true, data: created });
   } catch (error) {
     console.error('Create house error:', error);
-    res.status(500).json({ success: false, error: 'Failed to create listing.' });
+    res.status(500).json({ success: false, error: 'Failed to create house.' });
   }
 });
 
@@ -66,17 +66,17 @@ router.post('/me/houses', requireAuth, (req, res) => {
  * PUT /api/accounts/me/houses/:id
  * Update a house — only if it belongs to the current owner.
  */
-router.put('/me/houses/:id', requireAuth, (req, res) => {
+router.put('/me/houses/:id', requireAuth, async (req, res) => {
   try {
-    const house = getHouseById(req.params.id);
+    const house = await getHouseById(req.params.id);
     if (!house) return res.status(404).json({ success: false, error: 'House not found.' });
     if (house.ownerId !== req.user.id) {
-      return res.status(403).json({ success: false, error: 'You do not own this listing.' });
+      return res.status(403).json({ success: false, error: 'You do not own this house.' });
     }
-    const updated = updateHouse(req.params.id, req.body);
+    const updated = await updateHouse(req.params.id, req.body);
     res.json({ success: true, data: updated });
   } catch (error) {
-    res.status(500).json({ success: false, error: 'Failed to update listing.' });
+    res.status(500).json({ success: false, error: 'Failed to update house.' });
   }
 });
 
@@ -84,24 +84,24 @@ router.put('/me/houses/:id', requireAuth, (req, res) => {
  * DELETE /api/accounts/me/houses/:id
  * Delete a house — only if it belongs to the current owner.
  */
-router.delete('/me/houses/:id', requireAuth, (req, res) => {
+router.delete('/me/houses/:id', requireAuth, async (req, res) => {
   try {
-    const house = getHouseById(req.params.id);
+    const house = await getHouseById(req.params.id);
     if (!house) return res.status(404).json({ success: false, error: 'House not found.' });
     if (house.ownerId !== req.user.id) {
-      return res.status(403).json({ success: false, error: 'You do not own this listing.' });
+      return res.status(403).json({ success: false, error: 'You do not own this house.' });
     }
-    const ok = deleteHouse(req.params.id);
+    const ok = await deleteHouse(req.params.id);
 
     // Remove from owner's houseIds
-    const account = getAccountById(req.user.id);
+    const account = await getAccountById(req.user.id);
     if (account) {
-      updateAccount(req.user.id, { houseIds: (account.houseIds || []).filter(id => id !== Number(req.params.id)) });
+      await updateAccount(req.user.id, { houseIds: (account.houseIds || []).filter(id => id !== Number(req.params.id)) });
     }
 
     res.json({ success: true, deleted: ok });
   } catch (error) {
-    res.status(500).json({ success: false, error: 'Failed to delete listing.' });
+    res.status(500).json({ success: false, error: 'Failed to delete house.' });
   }
 });
 
@@ -181,9 +181,9 @@ router.post('/me/enquiries/:enquiryId/reply', requireAuth, (req, res) => {
  * GET /api/accounts/me/profile
  * Owner profile info.
  */
-router.get('/me/profile', requireAuth, (req, res) => {
+router.get('/me/profile', requireAuth, async (req, res) => {
   try {
-    const account = getAccountById(req.user.id);
+    const account = await getAccountById(req.user.id);
     if (!account) return res.status(404).json({ success: false, error: 'Account not found.' });
     const { passwordHash, ...safe } = account;
     res.json({ success: true, user: safe });
@@ -196,10 +196,10 @@ router.get('/me/profile', requireAuth, (req, res) => {
  * PUT /api/accounts/me/profile
  * Update name, phone fields.
  */
-router.put('/me/profile', requireAuth, (req, res) => {
+router.put('/me/profile', requireAuth, async (req, res) => {
   try {
     const { name, phone } = req.body;
-    const updated = updateAccount(req.user.id, { name, phone });
+    const updated = await updateAccount(req.user.id, { name, phone });
     if (!updated) return res.status(404).json({ success: false, error: 'Account not found.' });
     res.json({ success: true, user: updated });
   } catch (error) {

@@ -64,8 +64,8 @@ export default function LoginPage() {
           <div className="auth-logo-text">KejaKU</div>
         </Link>
 
-        <h1 className="auth-heading">Welcome back 👋</h1>
-        <p className="auth-subheading">Sign in to manage your listings and enquiries.</p>
+        <h1 className="auth-heading">Welcome back</h1>
+        <p className="auth-subheading">Sign in to manage your houses and messages.</p>
 
         {error && (
           <div className="auth-error-banner" role="alert" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>

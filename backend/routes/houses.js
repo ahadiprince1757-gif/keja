@@ -6,9 +6,9 @@ const { getAllHouses, getHouseById, addHouse } = require('../data/houses');
  * GET /api/houses
  * Query params: keyword, area, type, maxRent, minRent, verifiedOnly, sortBy
  */
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
   try {
-    let houses = getAllHouses();
+    let houses = await getAllHouses();
     const { keyword, area, type, maxRent, minRent, verifiedOnly, sortBy } = req.query;
 
     // Filter by keyword
@@ -71,9 +71,9 @@ router.get('/', (req, res) => {
 /**
  * GET /api/houses/:id
  */
-router.get('/:id', (req, res) => {
+router.get('/:id', async (req, res) => {
   try {
-    const house = getHouseById(req.params.id);
+    const house = await getHouseById(req.params.id);
     if (!house) {
       return res.status(404).json({ success: false, error: 'House listing not found' });
     }
@@ -87,7 +87,7 @@ router.get('/:id', (req, res) => {
  * POST /api/houses
  * Create a new house listing
  */
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
   try {
     const { title, area, type, rent } = req.body;
     if (!title || !area || !type || !rent) {
@@ -97,15 +97,15 @@ router.post('/', (req, res) => {
       });
     }
 
-    const created = addHouse(req.body);
+    const created = await addHouse(req.body);
     res.status(201).json({
       success: true,
-      message: 'Property listing created successfully',
+      message: 'House added successfully',
       data: created
     });
   } catch (error) {
     console.error('Error creating house listing:', error);
-    res.status(500).json({ success: false, error: 'Could not create listing' });
+    res.status(500).json({ success: false, error: 'Could not add house' });
   }
 });
 
