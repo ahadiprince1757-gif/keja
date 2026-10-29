@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import Navbar from "../components/Navbar";
-import NoticeBanner from "../components/NoticeBanner";
+import BottomNav from "../components/BottomNav";
 import FilterSidebar from "../components/FilterSidebar";
 import HouseCard from "../components/HouseCard";
 import HowItWorks from "../components/HowItWorks";
@@ -163,8 +163,6 @@ export default function HomePage() {
       />
 
       <main className="container">
-        <NoticeBanner />
-
         <div className="content-layout">
           <FilterSidebar
             filters={filters}
@@ -270,6 +268,16 @@ export default function HomePage() {
 
       {/* Toast Notification */}
       <Toast message={toast.message} type={toast.type} />
+
+      {/* Smart Mobile Bottom Navigation */}
+      <BottomNav
+        savedCount={savedIds.size}
+        isSavedActive={filters.savedOnly}
+        onOpenSaved={handleOpenSavedOnly}
+        searchTerm={filters.keyword}
+        onSearchChange={(val) => handleFilterChange("keyword", val)}
+        onOpenFilters={() => setIsMobileFiltersOpen((prev) => !prev)}
+      />
     </>
   );
 }
