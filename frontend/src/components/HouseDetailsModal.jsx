@@ -147,64 +147,69 @@ export default function HouseDetailsModal({
             </div>
           </div>
 
-          {/* Clean Quick Specs Grid */}
-          <div className="detail-specs-grid">
-            <div className="spec-card">
-              <div className="spec-icon-wrap">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
-                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                  <polyline points="9 22 9 12 15 12 15 22"></polyline>
-                </svg>
+          {/* Structured Property Specs Card */}
+          <div className="detail-specs-card">
+            {/* Short specs row: Type & Floor */}
+            <div className="specs-row-split">
+              <div className="spec-item">
+                <div className="spec-icon-box">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                  </svg>
+                </div>
+                <div className="spec-text">
+                  <span className="spec-label-sm">Room Type</span>
+                  <span className="spec-val-bold">{house.type}</span>
+                </div>
               </div>
-              <div className="spec-content">
-                <span className="spec-name">Room Type</span>
-                <span className="spec-value">{house.type}</span>
+
+              <div className="spec-item">
+                <div className="spec-icon-box">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                    <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
+                    <line x1="9" y1="22" x2="9" y2="22.01"></line>
+                    <line x1="15" y1="22" x2="15" y2="22.01"></line>
+                    <line x1="9" y1="6" x2="9" y2="6.01"></line>
+                    <line x1="15" y1="6" x2="15" y2="6.01"></line>
+                    <line x1="9" y1="10" x2="9" y2="10.01"></line>
+                    <line x1="15" y1="10" x2="15" y2="10.01"></line>
+                    <line x1="9" y1="14" x2="9" y2="14.01"></line>
+                    <line x1="15" y1="14" x2="15" y2="14.01"></line>
+                  </svg>
+                </div>
+                <div className="spec-text">
+                  <span className="spec-label-sm">Floor Level</span>
+                  <span className="spec-val-bold">{house.floor || '1st Floor'}</span>
+                </div>
               </div>
             </div>
 
-            <div className="spec-card">
-              <div className="spec-icon-wrap">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
-                  <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
-                  <line x1="9" y1="22" x2="9" y2="22.01"></line>
-                  <line x1="15" y1="22" x2="15" y2="22.01"></line>
-                  <line x1="9" y1="6" x2="9" y2="6.01"></line>
-                  <line x1="15" y1="6" x2="15" y2="6.01"></line>
-                  <line x1="9" y1="10" x2="9" y2="10.01"></line>
-                  <line x1="15" y1="10" x2="15" y2="10.01"></line>
-                  <line x1="9" y1="14" x2="9" y2="14.01"></line>
-                  <line x1="15" y1="14" x2="15" y2="14.01"></line>
-                </svg>
-              </div>
-              <div className="spec-content">
-                <span className="spec-name">Floor Level</span>
-                <span className="spec-value">{house.floor || '1st Floor'}</span>
-              </div>
-            </div>
-
-            <div className="spec-card">
-              <div className="spec-icon-wrap">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+            {/* Campus Commute (Full Width) */}
+            <div className="spec-item spec-item-full">
+              <div className="spec-icon-box">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
                   <circle cx="12" cy="12" r="10"></circle>
                   <polyline points="12 6 12 12 16 14"></polyline>
                 </svg>
               </div>
-              <div className="spec-content">
-                <span className="spec-name">Campus Distance</span>
-                <span className="spec-value">{house.distance}</span>
+              <div className="spec-text">
+                <span className="spec-label-sm">Campus Distance</span>
+                <span className="spec-val-bold">{house.distance}</span>
               </div>
             </div>
 
-            <div className="spec-card">
-              <div className="spec-icon-wrap">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+            {/* Gate Access & Curfew (Full Width) */}
+            <div className="spec-item spec-item-full">
+              <div className="spec-icon-box">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
                   <path d="M21 2l-2 2m-1.5 1.5L14 9l-1.5-1.5-3 3 1.5 1.5L9 14l-1.5-1.5-3 3 1.5 1.5-2 2"></path>
                   <circle cx="7.5" cy="16.5" r="4.5"></circle>
                 </svg>
               </div>
-              <div className="spec-content">
-                <span className="spec-name">Gate Access</span>
-                <span className="spec-value">{house.gateCurfew || 'Resident Key'}</span>
+              <div className="spec-text">
+                <span className="spec-label-sm">Gate Access</span>
+                <span className="spec-val-bold">{house.gateCurfew || 'Open 24/7 (Resident Key Provided)'}</span>
               </div>
             </div>
           </div>

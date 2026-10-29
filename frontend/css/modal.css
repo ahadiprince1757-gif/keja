@@ -327,28 +327,49 @@
 }
 
 /* ==========================================================================
-   Quick Specs Grid (Clean 2x2 with Icons)
+/* ==========================================================================
+   Structured Property Specs Card (Optimized for Mobile & Long Text)
    ========================================================================== */
-.detail-specs-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 8px;
-  margin-bottom: 18px;
-}
-
-.spec-card {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+.detail-specs-card {
   background: #f8fafc;
   border: 1px solid #e2e8f0;
-  border-radius: 10px;
-  padding: 8px 12px;
+  border-radius: 12px;
+  padding: 10px 14px;
+  margin-bottom: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-.spec-icon-wrap {
-  width: 30px;
-  height: 30px;
+.specs-row-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #edf2f7;
+}
+
+.spec-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  min-width: 0;
+}
+
+.spec-item-full {
+  padding-top: 2px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #edf2f7;
+}
+
+.spec-item-full:last-child {
+  border-bottom: none;
+  padding-bottom: 2px;
+}
+
+.spec-icon-box {
+  width: 32px;
+  height: 32px;
   border-radius: 8px;
   background: #edf5f0;
   color: var(--primary);
@@ -356,30 +377,31 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  margin-top: 1px;
 }
 
-.spec-content {
+.spec-text {
   display: flex;
   flex-direction: column;
   min-width: 0;
+  flex: 1;
 }
 
-.spec-name {
-  font-size: 0.66rem;
-  color: #94a3b8;
+.spec-label-sm {
+  font-size: 0.68rem;
+  color: #64748b;
   text-transform: uppercase;
   font-weight: 700;
-  letter-spacing: 0.03em;
-  margin-bottom: 1px;
+  letter-spacing: 0.04em;
+  margin-bottom: 2px;
 }
 
-.spec-value {
-  font-size: 0.82rem;
+.spec-val-bold {
+  font-size: 0.88rem;
   font-weight: 700;
   color: #1e293b;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  line-height: 1.4;
+  word-break: break-word;
 }
 
 /* ==========================================================================
