@@ -11,9 +11,13 @@ import ListHouseModal from "../components/ListHouseModal";
 import Toast from "../components/Toast";
 import { defaultHouses } from "../data/houses";
 
+import { useAuth } from "../context/AuthContext";
+
 const STORAGE_SAVED_KEY = "kejaku_saved_houses_v2";
 
 export default function HomePage() {
+  const { isLoggedIn, authFetch } = useAuth();
+
   // Houses state
   const [houses, setHouses] = useState(() => {
     return defaultHouses;
@@ -51,7 +55,6 @@ export default function HomePage() {
   // Toast state
   const [toast, setToast] = useState({ message: "", type: "info" });
 
-  // Sync saved set with localStorage
   const triggerToast = (message, type = "info") => {
     setToast({ message, type });
     setTimeout(() => {
@@ -59,20 +62,56 @@ export default function HomePage() {
     }, 3200);
   };
 
-  const handleToggleSave = (house) => {
+  // When user is logged in, fetch their saved house IDs directly from Supabase
+  useEffect(() => {
+    if (!isLoggedIn) return;
+    authFetch("/api/saved/ids")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && Array.isArray(data.houseIds)) {
+          const freshSet = new Set(data.houseIds);
+          setSavedIds(freshSet);
+          localStorage.setItem(STORAGE_SAVED_KEY, JSON.stringify([...freshSet]));
+        }
+      })
+      .catch((err) => console.error("Error fetching saved houses from Supabase:", err));
+  }, [isLoggedIn, authFetch]);
+
+  const handleToggleSave = async (house) => {
+    const numId = Number(house.id);
+    const isCurrentlySaved = savedIds.has(numId);
+
+    // Optimistic UI update
     setSavedIds((prev) => {
       const updated = new Set(prev);
-      const numId = Number(house.id);
-      if (updated.has(numId)) {
+      if (isCurrentlySaved) {
         updated.delete(numId);
-        triggerToast(`Removed "${house.title}" from saved houses.`);
       } else {
         updated.add(numId);
-        triggerToast(`Saved "${house.title}" to your list!`);
       }
       localStorage.setItem(STORAGE_SAVED_KEY, JSON.stringify([...updated]));
       return updated;
     });
+
+    if (isCurrentlySaved) {
+      triggerToast(`Removed "${house.title}" from saved houses.`);
+    } else {
+      triggerToast(`Saved "${house.title}" to your list!`);
+    }
+
+    // Persist explicitly to Supabase if logged in
+    if (isLoggedIn) {
+      try {
+        const method = isCurrentlySaved ? "DELETE" : "POST";
+        const res = await authFetch(`/api/saved/${numId}`, { method });
+        const result = await res.json();
+        if (!res.ok || !result.success) {
+          console.warn("Supabase save sync warning:", result.error);
+        }
+      } catch (err) {
+        console.error("Failed to sync save with Supabase:", err);
+      }
+    }
   };
 
   const handleFilterChange = (field, value) => {
@@ -157,7 +196,6 @@ export default function HomePage() {
       <Navbar
         savedCount={savedIds.size}
         onOpenSaved={handleOpenSavedOnly}
-        onOpenListHouse={() => setIsListHouseOpen(true)}
         searchTerm={filters.keyword}
         onSearchChange={(val) => handleFilterChange("keyword", val)}
       />
@@ -242,7 +280,7 @@ export default function HomePage() {
       </main>
 
       <HowItWorks />
-      <Footer />
+      <Footer onOpenListHouse={() => setIsListHouseOpen(true)} />
 
       {/* Modals */}
       {selectedHouseForDetails && (

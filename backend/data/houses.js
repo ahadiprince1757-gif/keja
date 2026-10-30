@@ -180,6 +180,20 @@ async function addHouse(houseData) {
     owner_id: houseData.ownerId || null,
   };
 
+  // Determine the next ID if identity sequence is out of sync (common when seed rows were inserted with explicit IDs)
+  try {
+    const { data: latest } = await supabase
+      .from('houses')
+      .select('id')
+      .order('id', { ascending: false })
+      .limit(1);
+    if (latest && latest.length > 0 && typeof latest[0].id === 'number') {
+      payload.id = latest[0].id + 1;
+    }
+  } catch (seqErr) {
+    console.warn('Could not determine next house ID sequence, letting DB assign:', seqErr.message);
+  }
+
   const { data, error } = await supabase
     .from('houses')
     .insert([payload])

@@ -25,7 +25,21 @@ export default function HouseDetailsModal({
     ? house.images
     : (house.image ? [house.image] : ['https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1200&q=80']);
 
-  const totalMoveIn = (house.rent || 0) + (house.deposit || 0) + (house.garbageFee || 150);
+  const numericGarbageFee = typeof house.garbageFee === 'number'
+    ? house.garbageFee
+    : (!isNaN(Number(house.garbageFee)) && house.garbageFee !== '' && house.garbageFee !== null && house.garbageFee !== undefined
+        ? Number(house.garbageFee)
+        : 0);
+
+  const totalMoveIn = (house.rent || 0) + (house.deposit || 0) + numericGarbageFee;
+
+  const rawPhone = (house.whatsapp || house.phone || '').toString().replace(/[^0-9]/g, '');
+  const phone = rawPhone.startsWith('0')
+    ? '254' + rawPhone.slice(1)
+    : (rawPhone.startsWith('254') ? rawPhone : (rawPhone ? '254' + rawPhone : '254700000000'));
+  const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent(
+    `Hello, I am interested in viewing ${house.title || 'your house'} listed on Keja.`
+  )}`;
 
   return (
     <div className="modal-backdrop open" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
@@ -247,7 +261,13 @@ export default function HouseDetailsModal({
               </div>
               <div className="cost-row">
                 <span>Monthly Garbage Collection</span>
-                <strong>{formatMoney(house.garbageFee || 150)}</strong>
+                <strong>
+                  {house.garbageFee === 'N/A' || house.garbageFee === 'n/a'
+                    ? 'N/A'
+                    : (!isNaN(Number(house.garbageFee)) && house.garbageFee !== '' && house.garbageFee !== null && house.garbageFee !== undefined
+                        ? formatMoney(house.garbageFee)
+                        : (house.garbageFee || 'N/A'))}
+                </strong>
               </div>
               <div className="cost-row cost-utility-row">
                 <span>Water Supply</span>

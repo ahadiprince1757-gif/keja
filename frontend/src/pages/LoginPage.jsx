@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link, useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { AlertCircle } from 'lucide-react';
 
@@ -7,8 +7,10 @@ export default function LoginPage() {
   const { login } = useAuth();
   const navigate   = useNavigate();
   const location   = useLocation();
+  const [searchParams] = useSearchParams();
 
-  const from = location.state?.from?.pathname || '/dashboard';
+  const roleParam = searchParams.get('role');
+  const from = location.state?.from?.pathname || (roleParam === 'student' ? '/' : '/dashboard');
 
   const [form, setForm]       = useState({ email: '', password: '' });
   const [error, setError]     = useState('');
@@ -36,7 +38,8 @@ export default function LoginPage() {
       }
 
       login(data.token, data.user);
-      navigate(from, { replace: true });
+      const target = from !== '/dashboard' ? from : (data.user.role === 'owner' ? '/dashboard' : '/');
+      navigate(target, { replace: true });
     } catch {
       setError('Network error. Please check your connection.');
       setLoading(false);
@@ -61,11 +64,17 @@ export default function LoginPage() {
               <polyline points="9 22 9 12 15 12 15 22"/>
             </svg>
           </div>
-          <div className="auth-logo-text">KejaKU</div>
+          <div className="auth-logo-text">Keja</div>
         </Link>
 
-        <h1 className="auth-heading">Welcome back</h1>
-        <p className="auth-subheading">Sign in to manage your houses and messages.</p>
+        <h1 className="auth-heading">
+          {roleParam === 'student' ? 'Student Sign In' : (roleParam === 'owner' ? 'Owner / Caretaker Sign In' : 'Welcome back')}
+        </h1>
+        <p className="auth-subheading">
+          {roleParam === 'student'
+            ? 'Sign in to access your saved houses and viewing requests.'
+            : 'Sign in to manage your houses and tenant enquiries.'}
+        </p>
 
         {error && (
           <div className="auth-error-banner" role="alert" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -117,7 +126,7 @@ export default function LoginPage() {
         <div className="auth-divider"><span>or</span></div>
         <p className="auth-switch">
           Don't have an account?{' '}
-          <Link to="/register">Create one free</Link>
+          <Link to={roleParam ? `/register?role=${roleParam}` : '/register'}>Create one free</Link>
         </p>
       </div>
     </div>

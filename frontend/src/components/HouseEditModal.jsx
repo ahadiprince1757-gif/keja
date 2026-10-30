@@ -13,6 +13,7 @@ export default function HouseEditModal({ house, onClose, onUpdated }) {
     type:        house.type  || TYPES[0],
     rent:        house.rent  || '',
     deposit:     house.deposit || '',
+    garbageFee:  house.garbageFee !== undefined && house.garbageFee !== null ? String(house.garbageFee) : '',
     landmark:    house.landmark || '',
     vacantUnits: house.vacantUnits || 1,
     description: house.description || '',
@@ -82,6 +83,7 @@ export default function HouseEditModal({ house, onClose, onUpdated }) {
           ...form,
           rent:        Number(form.rent),
           deposit:     Number(form.deposit),
+          garbageFee:  form.garbageFee.trim() === '' ? 'N/A' : (isNaN(Number(form.garbageFee)) ? form.garbageFee.trim() : Number(form.garbageFee)),
           vacantUnits: Number(form.vacantUnits),
           features:    selectedFeatures,
           rules:       rulesArray,
@@ -147,6 +149,10 @@ export default function HouseEditModal({ house, onClose, onUpdated }) {
             <div className="form-group">
               <label htmlFor="edit-deposit">Deposit (KES)</label>
               <input id="edit-deposit" name="deposit" type="number" min="0" className="form-input" value={form.deposit} onChange={handleChange} placeholder="e.g. 5500" />
+            </div>
+            <div className="form-group">
+              <label htmlFor="edit-garbage">Garbage Fee</label>
+              <input id="edit-garbage" name="garbageFee" type="text" className="form-input" value={form.garbageFee} onChange={handleChange} placeholder="e.g. 150 or N/A" />
             </div>
           </div>
 
@@ -216,6 +222,31 @@ export default function HouseEditModal({ house, onClose, onUpdated }) {
               >
                 + Add
               </button>
+            </div>
+          </div>
+
+          <div className="form-row">
+            <div className="form-group">
+              <label htmlFor="edit-water">Water Supply</label>
+              <input
+                id="edit-water"
+                name="water"
+                className="form-input"
+                value={form.water}
+                onChange={handleChange}
+                placeholder="e.g. Borehole 24/7"
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="edit-wifi">WiFi Internet</label>
+              <input
+                id="edit-wifi"
+                name="wifi"
+                className="form-input"
+                value={form.wifi}
+                onChange={handleChange}
+                placeholder="e.g. Free Fiber WiFi Included"
+              />
             </div>
           </div>
 

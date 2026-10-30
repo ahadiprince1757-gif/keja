@@ -1,10 +1,11 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import HomePage       from './pages/HomePage';
-import LoginPage      from './pages/LoginPage';
-import RegisterPage   from './pages/RegisterPage';
-import OwnerDashboard from './pages/OwnerDashboard';
-import AuthGuard      from './components/AuthGuard';
+import HomePage           from './pages/HomePage';
+import LoginPage          from './pages/LoginPage';
+import RegisterPage       from './pages/RegisterPage';
+import OwnerDashboard     from './pages/OwnerDashboard';
+import StudentAccountPage from './pages/StudentAccountPage';
+import AuthGuard          from './components/AuthGuard';
 
 export default function App() {
   return (
@@ -13,6 +14,14 @@ export default function App() {
         <Route path="/"          element={<HomePage />} />
         <Route path="/login"     element={<LoginPage />} />
         <Route path="/register"  element={<RegisterPage />} />
+        <Route
+          path="/account"
+          element={
+            <AuthGuard>
+              <StudentAccountPage />
+            </AuthGuard>
+          }
+        />
         <Route
           path="/dashboard/*"
           element={

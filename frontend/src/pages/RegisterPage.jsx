@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { AlertCircle } from 'lucide-react';
 
 export default function RegisterPage() {
   const { login } = useAuth();
   const navigate  = useNavigate();
+  const [searchParams] = useSearchParams();
 
+  const initialRole = searchParams.get('role') === 'owner' ? 'owner' : 'student';
+  const [role, setRole] = useState(initialRole); // 'student' or 'owner'
   const [form, setForm] = useState({ name: '', email: '', phone: '', password: '', confirm: '' });
   const [error, setError]     = useState('');
   const [loading, setLoading] = useState(false);
@@ -14,7 +17,7 @@ export default function RegisterPage() {
   const handleChange = (e) => setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
 
   const validate = () => {
-    if (!form.name.trim())  return 'Full name is required.';
+    if (!form.name.trim())  return 'Name is required.';
     if (!form.email.trim()) return 'Email address is required.';
     if (form.password.length < 6) return 'Password must be at least 6 characters.';
     if (form.password !== form.confirm) return 'Passwords do not match.';
@@ -33,7 +36,13 @@ export default function RegisterPage() {
       const res  = await fetch('/api/auth/register', {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({ name: form.name, email: form.email, phone: form.phone, password: form.password }),
+        body:    JSON.stringify({
+          name: form.name,
+          email: form.email,
+          phone: form.phone,
+          password: form.password,
+          role,
+        }),
       });
       const data = await res.json();
 
@@ -44,7 +53,8 @@ export default function RegisterPage() {
       }
 
       login(data.token, data.user);
-      navigate('/dashboard', { replace: true });
+      // If student, go back to home page to browse & save houses; if owner, go to dashboard
+      navigate(data.user.role === 'owner' ? '/dashboard' : '/', { replace: true });
     } catch {
       setError('Network error. Please check your connection.');
       setLoading(false);
@@ -73,7 +83,57 @@ export default function RegisterPage() {
         </Link>
 
         <h1 className="auth-heading">Create your account</h1>
-        <p className="auth-subheading">List your properties and chat with students — it's free.</p>
+        <p className="auth-subheading">
+          {role === 'student' ? 'Save houses, book visits, and chat with caretakers.' : 'List your properties and manage tenants.'}
+        </p>
+
+        {/* Minimal Role Selector */}
+        <div style={{
+          display: 'flex',
+          background: 'rgba(255, 255, 255, 0.05)',
+          borderRadius: '10px',
+          padding: '4px',
+          marginBottom: '20px',
+          gap: '4px',
+          border: '1px solid rgba(255, 255, 255, 0.08)'
+        }}>
+          <button
+            type="button"
+            onClick={() => setRole('student')}
+            style={{
+              flex: 1,
+              padding: '8px 12px',
+              borderRadius: '8px',
+              border: 'none',
+              background: role === 'student' ? 'var(--color-primary, #6366f1)' : 'transparent',
+              color: role === 'student' ? '#fff' : '#9ca3af',
+              fontSize: '13px',
+              fontWeight: 600,
+              cursor: 'pointer',
+              transition: 'all 0.2s ease',
+            }}
+          >
+            🎓 Student / Seeker
+          </button>
+          <button
+            type="button"
+            onClick={() => setRole('owner')}
+            style={{
+              flex: 1,
+              padding: '8px 12px',
+              borderRadius: '8px',
+              border: 'none',
+              background: role === 'owner' ? 'var(--color-primary, #6366f1)' : 'transparent',
+              color: role === 'owner' ? '#fff' : '#9ca3af',
+              fontSize: '13px',
+              fontWeight: 600,
+              cursor: 'pointer',
+              transition: 'all 0.2s ease',
+            }}
+          >
+            🏠 Caretaker / Owner
+          </button>
+        </div>
 
         {error && (
           <div className="auth-error-banner" role="alert" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -147,7 +207,7 @@ export default function RegisterPage() {
         <div className="auth-divider"><span>or</span></div>
         <p className="auth-switch">
           Already have an account?{' '}
-          <Link to="/login">Sign in</Link>
+          <Link to={`/login?role=${role}`}>Sign in</Link>
         </p>
       </div>
     </div>

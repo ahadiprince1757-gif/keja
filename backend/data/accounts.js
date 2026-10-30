@@ -80,7 +80,7 @@ async function addAccount(data) {
     email: data.email.toLowerCase().trim(),
     password_hash: data.passwordHash,
     phone: (data.phone || '').trim(),
-    role: 'owner',
+    role: data.role || 'student',
     house_ids: [],
     avatar: null,
   };

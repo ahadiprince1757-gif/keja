@@ -15,7 +15,7 @@ const TOKEN_EXPIRY = '7d';
  */
 router.post('/register', async (req, res) => {
   try {
-    const { name, email, phone, password } = req.body;
+    const { name, email, phone, password, role } = req.body;
 
     // Validation
     if (!name || !email || !password) {
@@ -38,8 +38,9 @@ router.post('/register', async (req, res) => {
     // Hash password
     const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
 
-    // Create account in Supabase
-    const account = await addAccount({ name, email, phone, passwordHash });
+    // Create account in Supabase (default role is 'student' unless 'owner' specified)
+    const assignedRole = role === 'owner' ? 'owner' : 'student';
+    const account = await addAccount({ name, email, phone, passwordHash, role: assignedRole });
 
     // Issue token
     const token = jwt.sign(

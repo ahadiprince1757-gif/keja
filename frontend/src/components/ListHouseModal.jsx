@@ -3,6 +3,26 @@ import { useAuth } from '../context/AuthContext';
 
 export default function ListHouseModal({ onClose, onHouseCreated }) {
   const { user, authFetch, isLoggedIn } = useAuth();
+
+  // Strict check: Only owners / caretakers can list a house
+  if (!isLoggedIn || user?.role !== 'owner') {
+    return (
+      <div className="modal-backdrop open" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
+        <div className="modal-container" style={{ maxWidth: '440px', textAlign: 'center', padding: '32px 24px' }}>
+          <h3 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: 8, color: '#ef4444' }}>
+            Access Restricted
+          </h3>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: 20 }}>
+            Students cannot list houses. Please log in with a house owner or caretaker account.
+          </p>
+          <button type="button" className="btn btn-primary" onClick={onClose} style={{ width: '100%', justifyContent: 'center' }}>
+            Close
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   const [title, setTitle] = useState('');
   const [area, setArea] = useState('');
   const [type, setType] = useState('Bedsitter');
@@ -10,12 +30,13 @@ export default function ListHouseModal({ onClose, onHouseCreated }) {
   const [vacantUnits, setVacantUnits] = useState(1);
   const [rent, setRent] = useState('');
   const [deposit, setDeposit] = useState('');
+  const [garbageFee, setGarbageFee] = useState('');
   const [distance, setDistance] = useState('');
   const [landmark, setLandmark] = useState('');
-  const [water, setWater] = useState('Borehole on-site 24/7 (High Pressure)');
+  const [water, setWater] = useState('');
   const [electricity, setElectricity] = useState('Individual Prepaid KPLC Token Meter');
-  const [wifi, setWifi] = useState('Free Fiber WiFi Included');
-  const [gateCurfew, setGateCurfew] = useState('Open 24/7 (Resident Key Provided)');
+  const [wifi, setWifi] = useState('');
+  const [gateCurfew, setGateCurfew] = useState('');
   const [caretaker, setCaretaker] = useState(user?.name || '');
   const [phone, setPhone] = useState(user?.phone || '');
   const [description, setDescription] = useState('');
@@ -48,35 +69,28 @@ export default function ListHouseModal({ onClose, onHouseCreated }) {
   };
 
   const addCustomFeature = () => {
-    const trimmed = customFeature.trim();
-    if (trimmed && !selectedFeatures.includes(trimmed)) {
-      setSelectedFeatures(prev => [...prev, trimmed]);
+    if (customFeature.trim() && !selectedFeatures.includes(customFeature.trim())) {
+      setSelectedFeatures(prev => [...prev, customFeature.trim()]);
       setCustomFeature('');
     }
   };
 
+  const removeFeature = (feat) => {
+    setSelectedFeatures(prev => prev.filter(f => f !== feat));
+  };
+
   const [uploadedPhotos, setUploadedPhotos] = useState([]);
-  const [singleUrl, setSingleUrl] = useState('');
-  const [isDragOver, setIsDragOver] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
-  const handleFiles = (files) => {
-    if (!files || files.length === 0) return;
-    Array.from(files).forEach((file) => {
-      if (!file.type.startsWith('image/')) return;
+  const handlePhotoUpload = (e) => {
+    const files = Array.from(e.target.files);
+    files.forEach((file) => {
       const reader = new FileReader();
-      reader.onload = (event) => {
-        setUploadedPhotos((prev) => [...prev, event.target.result]);
+      reader.onloadend = () => {
+        setUploadedPhotos((prev) => [...prev, reader.result]);
       };
       reader.readAsDataURL(file);
     });
-  };
-
-  const handleAddUrl = () => {
-    if (singleUrl.trim()) {
-      setUploadedPhotos((prev) => [...prev, singleUrl.trim()]);
-      setSingleUrl('');
-    }
   };
 
   const handleRemovePhoto = (idx) => {
@@ -107,7 +121,7 @@ export default function ListHouseModal({ onClose, onHouseCreated }) {
       vacantUnits: Number(vacantUnits) || 1,
       rent: Number(rent),
       deposit: Number(deposit),
-      garbageFee: 150,
+      garbageFee: garbageFee.trim() === '' ? 'N/A' : (isNaN(Number(garbageFee)) ? garbageFee.trim() : Number(garbageFee)),
       distance,
       water,
       electricity,
@@ -164,28 +178,24 @@ export default function ListHouseModal({ onClose, onHouseCreated }) {
           </button>
         </div>
 
-        <div className="modal-body">
-          <p style={{ color: 'var(--text-secondary)', fontSize: '0.92rem', marginBottom: '18px' }}>
-            Add your house on Keja. Include photos, walking time to KU gates, and rent.
-          </p>
-
-          <form onSubmit={handleSubmit}>
+        <div className="modal-body" style={{ maxHeight: 'calc(90vh - 120px)', overflowY: 'auto', padding: '24px' }}>
+          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
             <div className="form-field">
-              <label className="form-label" htmlFor="newHouseTitle">House Title</label>
+              <label className="form-label" htmlFor="newHouseTitle">Apartment / Hostel Name</label>
               <input
-                type="text"
                 id="newHouseTitle"
+                type="text"
                 className="input-control"
-                placeholder="e.g. Spacious Tiled Bedsitter with Balcony & WiFi"
+                placeholder="e.g. Sunrise Modern Residency"
                 required
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
               />
             </div>
 
-            <div className="form-grid-2 form-field">
-              <div>
-                <label className="form-label" htmlFor="newHouseArea">KU Zone / Area</label>
+            <div className="form-row">
+              <div className="form-field">
+                <label className="form-label" htmlFor="newHouseArea">Location Area</label>
                 <select
                   id="newHouseArea"
                   className="input-control"
@@ -193,15 +203,31 @@ export default function ListHouseModal({ onClose, onHouseCreated }) {
                   value={area}
                   onChange={(e) => setArea(e.target.value)}
                 >
-                  <option value="">Select Zone</option>
+                  <option value="">Select location area...</option>
                   <option value="Kahawa Wendani">Kahawa Wendani</option>
                   <option value="Kahawa Sukari">Kahawa Sukari</option>
-                  <option value="Near KU main gate">Near KU Main Gate (KM)</option>
-                  <option value="Ruiru">Ruiru Campus Route</option>
+                  <option value="KM / Kenyatta Market">KM / Kenyatta Market</option>
+                  <option value="Ruiru">Ruiru</option>
                 </select>
               </div>
-              <div>
-                <label className="form-label" htmlFor="newHouseType">Room Category</label>
+
+              <div className="form-field">
+                <label className="form-label" htmlFor="newHouseLandmark">Specific Landmark / Stage</label>
+                <input
+                  id="newHouseLandmark"
+                  type="text"
+                  className="input-control"
+                  placeholder="e.g. Near Transformer, Clean Shelf, Magunas"
+                  required
+                  value={landmark}
+                  onChange={(e) => setLandmark(e.target.value)}
+                />
+              </div>
+            </div>
+
+            <div className="form-row">
+              <div className="form-field">
+                <label className="form-label" htmlFor="newHouseType">Housing Category</label>
                 <select
                   id="newHouseType"
                   className="input-control"
@@ -211,34 +237,36 @@ export default function ListHouseModal({ onClose, onHouseCreated }) {
                 >
                   <option value="Bedsitter">Bedsitter</option>
                   <option value="Single room">Single room</option>
-                  <option value="Shared room">Shared room</option>
-                  <option value="Hostel">Hostel</option>
                   <option value="1 Bedroom">1 Bedroom</option>
+                  <option value="Hostel">Hostel</option>
                 </select>
               </div>
-            </div>
 
-            <div className="form-grid-2 form-field">
-              <div>
+              <div className="form-field">
                 <label className="form-label" htmlFor="newHouseFloor">Floor Level</label>
-                <input
-                  type="text"
+                <select
                   id="newHouseFloor"
                   className="input-control"
-                  placeholder="e.g. 2nd Floor, Ground Floor"
                   value={floor}
                   onChange={(e) => setFloor(e.target.value)}
-                  required
-                />
+                >
+                  <option value="Ground Floor">Ground Floor</option>
+                  <option value="1st Floor">1st Floor</option>
+                  <option value="2nd Floor">2nd Floor</option>
+                  <option value="3rd Floor">3rd Floor</option>
+                  <option value="4th Floor">4th Floor</option>
+                  <option value="5th Floor+">5th Floor+</option>
+                </select>
               </div>
-              <div>
-                <label className="form-label" htmlFor="newHouseVacant">Currently Vacant Rooms</label>
+
+              <div className="form-field">
+                <label className="form-label" htmlFor="newHouseVacant">Vacant Rooms</label>
                 <input
-                  type="number"
                   id="newHouseVacant"
-                  className="input-control"
+                  type="number"
                   min="1"
                   max="50"
+                  className="input-control"
                   value={vacantUnits}
                   onChange={(e) => setVacantUnits(e.target.value)}
                   required
@@ -246,206 +274,134 @@ export default function ListHouseModal({ onClose, onHouseCreated }) {
               </div>
             </div>
 
-            <div className="form-grid-2 form-field">
-              <div>
+            <div className="form-row">
+              <div className="form-field">
                 <label className="form-label" htmlFor="newHouseRent">Monthly Rent (KSh)</label>
                 <input
-                  type="number"
                   id="newHouseRent"
+                  type="number"
                   className="input-control"
-                  placeholder="e.g. 5500"
-                  min="1000"
-                  step="100"
+                  placeholder="e.g. 7500"
                   required
                   value={rent}
                   onChange={(e) => setRent(e.target.value)}
                 />
               </div>
-              <div>
-                <label className="form-label" htmlFor="newHouseDeposit">Security Deposit (KSh)</label>
+
+              <div className="form-field">
+                <label className="form-label" htmlFor="newHouseDeposit">Deposit Amount (KSh)</label>
                 <input
-                  type="number"
                   id="newHouseDeposit"
+                  type="number"
                   className="input-control"
-                  placeholder="e.g. 5500"
-                  min="0"
-                  step="100"
+                  placeholder="e.g. 7500"
                   required
                   value={deposit}
                   onChange={(e) => setDeposit(e.target.value)}
                 />
               </div>
-            </div>
 
-            <div className="form-grid-2 form-field">
-              <div>
-                <label className="form-label" htmlFor="newHouseDistance">Walk / Commute to KU Gate</label>
+              <div className="form-field">
+                <label className="form-label" htmlFor="newHouseGarbage">Garbage Collection Fee</label>
                 <input
+                  id="newHouseGarbage"
                   type="text"
-                  id="newHouseDistance"
                   className="input-control"
-                  placeholder="e.g. 6 min walk to KU Nyayo Gate"
+                  placeholder="e.g. 150 or N/A"
+                  value={garbageFee}
+                  onChange={(e) => setGarbageFee(e.target.value)}
+                />
+              </div>
+
+              <div className="form-field">
+                <label className="form-label" htmlFor="newHouseDistance">Distance from KU Gate</label>
+                <input
+                  id="newHouseDistance"
+                  type="text"
+                  className="input-control"
+                  placeholder="e.g. 4 mins walk"
                   required
                   value={distance}
                   onChange={(e) => setDistance(e.target.value)}
                 />
               </div>
-              <div>
-                <label className="form-label" htmlFor="newHouseLandmark">Specific Landmark / Route</label>
-                <input
-                  type="text"
-                  id="newHouseLandmark"
-                  className="input-control"
-                  placeholder="e.g. Behind Magunas Supermarket"
-                  required
-                  value={landmark}
-                  onChange={(e) => setLandmark(e.target.value)}
-                />
-              </div>
             </div>
 
-            <div className="form-grid-2 form-field">
-              <div>
+            <div className="form-row">
+              <div className="form-field">
                 <label className="form-label" htmlFor="newHouseWater">Water Supply</label>
                 <input
-                  type="text"
                   id="newHouseWater"
+                  type="text"
                   className="input-control"
+                  placeholder="e.g. Borehole on-site 24/7"
                   value={water}
                   onChange={(e) => setWater(e.target.value)}
-                  required
                 />
               </div>
-              <div>
-                <label className="form-label" htmlFor="newHouseElectricity">Electricity</label>
-                <input
-                  type="text"
+
+              <div className="form-field">
+                <label className="form-label" htmlFor="newHouseElectricity">Electricity Setup</label>
+                <select
                   id="newHouseElectricity"
                   className="input-control"
                   value={electricity}
                   onChange={(e) => setElectricity(e.target.value)}
-                  required
-                />
+                >
+                  <option value="Individual Prepaid KPLC Token Meter">Individual Prepaid Token Meter</option>
+                  <option value="Shared Sub-meter (Billed by usage)">Shared Sub-meter</option>
+                  <option value="Fixed Monthly Electricity Fee">Fixed Monthly Fee</option>
+                </select>
               </div>
             </div>
 
-            <div className="form-grid-2 form-field">
-              <div>
-                <label className="form-label" htmlFor="newHouseWifi">Wi-Fi Connection</label>
+            <div className="form-row">
+              <div className="form-field">
+                <label className="form-label" htmlFor="newHouseWifi">WiFi Internet</label>
                 <input
-                  type="text"
                   id="newHouseWifi"
+                  type="text"
                   className="input-control"
+                  placeholder="e.g. Free Fiber WiFi Included"
                   value={wifi}
                   onChange={(e) => setWifi(e.target.value)}
                 />
               </div>
-              <div>
-                <label className="form-label" htmlFor="newHouseCurfew">Gate Hours</label>
+
+              <div className="form-field">
+                <label className="form-label" htmlFor="newHouseCurfew">Gate Curfew Policy</label>
                 <input
-                  type="text"
                   id="newHouseCurfew"
+                  type="text"
                   className="input-control"
+                  placeholder="e.g. Open 24/7 (Resident Key Provided)"
                   value={gateCurfew}
                   onChange={(e) => setGateCurfew(e.target.value)}
                 />
               </div>
             </div>
 
-            {/* Multi-Image Upload */}
-            <div className="form-field image-upload-section">
-              <label className="form-label">Property Photos (Upload Multiple)</label>
-              
-              <div
-                className={`file-dropzone ${isDragOver ? 'drag-over' : ''}`}
-                onClick={() => document.getElementById('multiFileInput')?.click()}
-                onDragOver={(e) => { e.preventDefault(); setIsDragOver(true); }}
-                onDragLeave={() => setIsDragOver(false)}
-                onDrop={(e) => {
-                  e.preventDefault();
-                  setIsDragOver(false);
-                  handleFiles(e.dataTransfer.files);
-                }}
-              >
+            <div className="form-row">
+              <div className="form-field">
+                <label className="form-label" htmlFor="newHouseCaretaker">Caretaker / Contact Person Name</label>
                 <input
-                  type="file"
-                  id="multiFileInput"
-                  multiple
-                  accept="image/*"
-                  style={{ display: 'none' }}
-                  onChange={(e) => handleFiles(e.target.files)}
-                />
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                  <polyline points="17 8 12 3 7 8"></polyline>
-                  <line x1="12" y1="3" x2="12" y2="15"></line>
-                </svg>
-                <div>
-                  <strong>Click to upload photos</strong> or drag & drop images here
-                  <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: '2px' }}>
-                    Supports PNG, JPG, WebP. First image becomes the cover photo.
-                  </div>
-                </div>
-              </div>
-
-              <div style={{ display: 'flex', gap: '8px', marginTop: '10px' }}>
-                <input
-                  type="url"
-                  className="input-control"
-                  placeholder="Or paste an image URL..."
-                  value={singleUrl}
-                  onChange={(e) => setSingleUrl(e.target.value)}
-                />
-                <button
-                  type="button"
-                  className="btn"
-                  onClick={handleAddUrl}
-                  style={{ whiteSpace: 'nowrap' }}
-                >
-                  + Add URL
-                </button>
-              </div>
-
-              {uploadedPhotos.length > 0 && (
-                <div className="upload-preview-grid">
-                  {uploadedPhotos.map((imgSrc, idx) => (
-                    <div key={idx} className={`upload-thumb-card ${idx === 0 ? 'is-cover' : ''}`}>
-                      <img src={imgSrc} alt={`Uploaded photo ${idx + 1}`} />
-                      {idx === 0 && <span className="cover-tag">Cover</span>}
-                      <button
-                        type="button"
-                        className="thumb-remove-btn"
-                        onClick={() => handleRemovePhoto(idx)}
-                        title="Remove image"
-                      >
-                        ×
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            <div className="form-grid-2 form-field">
-              <div>
-                <label className="form-label" htmlFor="newHouseCaretaker">Caretaker / Landlord Name</label>
-                <input
-                  type="text"
                   id="newHouseCaretaker"
+                  type="text"
                   className="input-control"
-                  placeholder="e.g. Mr. Mwangi"
+                  placeholder="e.g. John Mwangi"
                   required
                   value={caretaker}
                   onChange={(e) => setCaretaker(e.target.value)}
                 />
               </div>
-              <div>
-                <label className="form-label" htmlFor="newHousePhone">Phone / WhatsApp Number</label>
+
+              <div className="form-field">
+                <label className="form-label" htmlFor="newHousePhone">Direct Phone / WhatsApp Number</label>
                 <input
-                  type="tel"
                   id="newHousePhone"
+                  type="tel"
                   className="input-control"
-                  placeholder="+254 712 345 678"
+                  placeholder="e.g. 0712345678"
                   required
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
@@ -453,40 +409,148 @@ export default function ListHouseModal({ onClose, onHouseCreated }) {
               </div>
             </div>
 
+            {/* Photo Upload Section */}
             <div className="form-field">
-              <label className="form-label">Features & Amenities (Select all that apply)</label>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '10px' }}>
+              <label className="form-label">Property Photos</label>
+              <div
+                style={{
+                  border: '2px dashed var(--border-subtle)',
+                  borderRadius: '12px',
+                  padding: '24px',
+                  textAlign: 'center',
+                  background: 'var(--bg-page)',
+                  cursor: 'pointer',
+                  position: 'relative'
+                }}
+              >
+                <input
+                  type="file"
+                  multiple
+                  accept="image/*"
+                  onChange={handlePhotoUpload}
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    opacity: 0,
+                    cursor: 'pointer'
+                  }}
+                />
+                <div style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
+                  <span style={{ color: 'var(--primary)', fontWeight: 600 }}>Click to browse</span> or drag and drop photos here
+                  <div style={{ fontSize: '0.75rem', marginTop: 4, color: 'var(--text-muted)' }}>
+                    Add clear photos of the room interior, washroom, and building entrance.
+                  </div>
+                </div>
+              </div>
+
+              {/* Photo Previews */}
+              {uploadedPhotos.length > 0 && (
+                <div style={{ display: 'flex', gap: '10px', marginTop: '12px', flexWrap: 'wrap' }}>
+                  {uploadedPhotos.map((photo, idx) => (
+                    <div key={idx} style={{ position: 'relative', width: 72, height: 72, borderRadius: 8, overflow: 'hidden', border: '1px solid var(--border-subtle)' }}>
+                      <img src={photo} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      <button
+                        type="button"
+                        onClick={() => handleRemovePhoto(idx)}
+                        style={{
+                          position: 'absolute',
+                          top: 2,
+                          right: 2,
+                          background: 'rgba(0,0,0,0.6)',
+                          color: '#fff',
+                          border: 'none',
+                          borderRadius: '50%',
+                          width: 18,
+                          height: 18,
+                          fontSize: 10,
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center'
+                        }}
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Popular Amenities / Features Checkboxes */}
+            <div className="form-field">
+              <label className="form-label">Available Amenities</label>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '8px', marginTop: '6px' }}>
                 {POPULAR_FEATURES.map((feat) => {
-                  const isSelected = selectedFeatures.includes(feat);
+                  const isChecked = selectedFeatures.includes(feat);
                   return (
-                    <button
+                    <label
                       key={feat}
-                      type="button"
-                      onClick={() => toggleFeature(feat)}
                       style={{
-                        padding: '6px 12px',
-                        borderRadius: '20px',
-                        fontSize: '0.85rem',
-                        fontWeight: 600,
-                        border: isSelected ? '1.5px solid var(--primary)' : '1px solid var(--border-subtle)',
-                        backgroundColor: isSelected ? 'var(--primary-light, #e8f5ee)' : 'var(--bg-surface, #fff)',
-                        color: isSelected ? 'var(--primary)' : 'var(--text-main)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        fontSize: '0.86rem',
                         cursor: 'pointer',
-                        transition: 'all 0.15s ease'
+                        background: isChecked ? 'rgba(34, 197, 94, 0.08)' : 'var(--bg-page)',
+                        padding: '8px 12px',
+                        borderRadius: '8px',
+                        border: isChecked ? '1px solid var(--primary)' : '1px solid var(--border-subtle)',
+                        transition: 'all 0.2s'
                       }}
                     >
-                      {isSelected ? '✓ ' : '+ '}{feat}
-                    </button>
+                      <input
+                        type="checkbox"
+                        checked={isChecked}
+                        onChange={() => toggleFeature(feat)}
+                        style={{ accentColor: 'var(--primary)' }}
+                      />
+                      <span>{feat}</span>
+                    </label>
                   );
                 })}
               </div>
 
-              {/* Custom Feature Input */}
-              <div style={{ display: 'flex', gap: '8px' }}>
+              {/* Custom features chips */}
+              {selectedFeatures.filter(f => !POPULAR_FEATURES.includes(f)).length > 0 && (
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '10px' }}>
+                  {selectedFeatures.filter(f => !POPULAR_FEATURES.includes(f)).map((cf) => (
+                    <span
+                      key={cf}
+                      style={{
+                        background: 'var(--accent)',
+                        color: '#000',
+                        fontSize: '0.8rem',
+                        fontWeight: 600,
+                        padding: '4px 10px',
+                        borderRadius: '16px',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '6px'
+                      }}
+                    >
+                      {cf}
+                      <button
+                        type="button"
+                        onClick={() => removeFeature(cf)}
+                        style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '11px', padding: 0 }}
+                      >
+                        ✕
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              )}
+
+              {/* Add custom feature input */}
+              <div style={{ display: 'flex', gap: '8px', marginTop: '10px' }}>
                 <input
                   type="text"
                   className="input-control"
-                  placeholder="Or type a custom feature..."
+                  placeholder="Add custom amenity (e.g. Wardrobe, Study desk)..."
                   value={customFeature}
                   onChange={(e) => setCustomFeature(e.target.value)}
                   onKeyDown={(e) => {
@@ -495,6 +559,7 @@ export default function ListHouseModal({ onClose, onHouseCreated }) {
                       addCustomFeature();
                     }
                   }}
+                  style={{ flex: 1, padding: '8px 12px', fontSize: '0.88rem' }}
                 />
                 <button
                   type="button"

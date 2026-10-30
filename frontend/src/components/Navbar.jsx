@@ -7,26 +7,25 @@ import {
   MapPin,
   Home,
   Heart,
-  Plus,
   User,
   LogIn,
-  UserPlus,
+  GraduationCap,
   Building,
-  ShieldCheck
+  LogOut
 } from 'lucide-react';
 
 export default function Navbar({
   savedCount,
   onOpenSaved,
-  onOpenListHouse,
   searchTerm = '',
   onSearchChange
 }) {
-  const { user, isLoggedIn } = useAuth();
+  const { user, isLoggedIn, logout } = useAuth();
   const navigate = useNavigate();
   const [internalTerm, setInternalTerm] = useState(searchTerm);
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
-  const [showAuthPrompt, setShowAuthPrompt] = useState(false);
+  const [showRoleModal, setShowRoleModal] = useState(false);
+  const [roleMode, setRoleMode] = useState('signin'); // 'signin' or 'signup'
   const searchRef = useRef(null);
   const inputRef = useRef(null);
 
@@ -76,16 +75,6 @@ export default function Navbar({
     setInternalTerm(keyword);
     if (onSearchChange) onSearchChange(keyword);
     setIsSearchExpanded(false);
-  };
-
-  const handleListHouseClick = () => {
-    if (!isLoggedIn) {
-      setShowAuthPrompt(true);
-      return;
-    }
-    if (onOpenListHouse) {
-      onOpenListHouse();
-    }
   };
 
   return (
@@ -207,7 +196,7 @@ export default function Navbar({
           <nav className="nav-actions">
             <button
               type="button"
-              className="btn btn-saved-houses"
+              className="btn btn-saved-houses nav-saved-btn"
               id="btnSavedHouses"
               onClick={onOpenSaved}
             >
@@ -216,107 +205,215 @@ export default function Navbar({
               <span className="saved-count-pill" id="savedCountPill">{savedCount}</span>
             </button>
 
-            <button
-              type="button"
-              className="btn btn-primary btn-list-house"
-              id="btnListHouse"
-              onClick={handleListHouseClick}
-            >
-              <Plus size={16} strokeWidth={2.5} />
-              List a House
-            </button>
-
-            {isLoggedIn && (
-              <Link
-                to="/dashboard"
-                className="btn btn-saved-houses"
-                id="nav-dashboard-link"
-                style={{ textDecoration: 'none', gap: '8px' }}
+            {isLoggedIn ? (
+              <div className="nav-user-account" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                {user?.role === 'owner' ? (
+                  <Link
+                    to="/dashboard"
+                    className="btn nav-user-btn"
+                    id="nav-dashboard-link"
+                    style={{ textDecoration: 'none' }}
+                    title={`Dashboard (${user?.name || 'Owner'})`}
+                  >
+                    <User size={16} strokeWidth={2.2} />
+                    <span className="user-name-text">{user?.name?.split(' ')[0] || 'Dashboard'}</span>
+                  </Link>
+                ) : (
+                  <Link
+                    to="/account"
+                    className="btn nav-user-btn nav-user-student"
+                    id="nav-student-link"
+                    style={{ textDecoration: 'none' }}
+                    title={`My Account (${user?.name || 'Student'})`}
+                  >
+                    <User size={16} strokeWidth={2.2} />
+                    <span className="user-name-text">{user?.name?.split(' ')[0] || 'Account'}</span>
+                  </Link>
+                )}
+                <button
+                  type="button"
+                  className="btn nav-logout-btn"
+                  onClick={logout}
+                  title="Sign out"
+                  aria-label="Sign out"
+                >
+                  <LogOut size={15} strokeWidth={2.2} />
+                </button>
+              </div>
+            ) : (
+              <button
+                type="button"
+                className="btn nav-login-btn"
+                id="nav-login-btn"
+                onClick={() => {
+                  setRoleMode('signin');
+                  setShowRoleModal(true);
+                }}
               >
-                <User size={16} strokeWidth={2.2} />
-                <span className="btn-label">{user?.name?.split(' ')[0] || 'Dashboard'}</span>
-              </Link>
+                <LogIn size={16} strokeWidth={2.2} />
+                <span className="login-text">Sign In</span>
+              </button>
             )}
           </nav>
         </div>
       </header>
 
-      {/* Auth Prompt Modal when clicking List a House while not logged in */}
-      {showAuthPrompt && (
+      {/* Role Selection Modal: Choose between Student or House Owner */}
+      {showRoleModal && (
         <div
           className="modal-backdrop open"
-          onClick={(e) => { if (e.target === e.currentTarget) setShowAuthPrompt(false); }}
-          style={{ zIndex: 1200 }}
+          onClick={(e) => { if (e.target === e.currentTarget) setShowRoleModal(false); }}
+          style={{ zIndex: 1250 }}
         >
-          <div className="modal-container" style={{ maxWidth: '440px', textAlign: 'center', padding: '32px 28px' }}>
-            <div
-              style={{
-                width: 56,
-                height: 56,
-                borderRadius: '50%',
-                background: 'rgba(34, 197, 94, 0.12)',
-                color: 'var(--primary)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                margin: '0 auto 18px',
-                border: '1px solid rgba(34, 197, 94, 0.25)'
-              }}
-            >
-              <Building size={28} strokeWidth={2.2} />
+          <div className="modal-container" style={{ maxWidth: '420px', padding: '24px 22px', textAlign: 'center' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
+              <h3 style={{ fontSize: '1.2rem', fontWeight: 800, margin: 0 }}>
+                {roleMode === 'signin' ? 'Sign In to KejaKU' : 'Create an Account'}
+              </h3>
+              <button
+                type="button"
+                onClick={() => setShowRoleModal(false)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  fontSize: '20px',
+                  color: 'var(--text-muted)',
+                  cursor: 'pointer',
+                  padding: '4px'
+                }}
+              >
+                ✕
+              </button>
             </div>
 
-            <h3 style={{ fontSize: '1.3rem', fontWeight: 800, color: 'var(--text-main)', marginBottom: 8 }}>
-              Owner Account Required
-            </h3>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '0.92rem', lineHeight: 1.5, marginBottom: 24 }}>
-              To list a house or apartment, manage vacant units, and chat with prospective student tenants, you need to sign in or create an owner account.
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: 18 }}>
+              {roleMode === 'signin'
+                ? 'Choose your account type:'
+                : 'Select your account type:'}
             </p>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '10px', marginBottom: 18 }}>
+              {/* Option 1: Student */}
               <button
                 type="button"
-                className="btn btn-primary"
-                style={{ width: '100%', justifyContent: 'center', padding: '12px', gap: 8 }}
                 onClick={() => {
-                  setShowAuthPrompt(false);
-                  navigate('/login');
+                  setShowRoleModal(false);
+                  const path = roleMode === 'signin' ? '/login?role=student' : '/register?role=student';
+                  navigate(path);
                 }}
-                id="modal-btn-signin"
-              >
-                <LogIn size={16} strokeWidth={2.4} />
-                Sign In to Your Account
-              </button>
-
-              <button
-                type="button"
-                className="btn btn-saved-houses"
-                style={{ width: '100%', justifyContent: 'center', padding: '12px', gap: 8 }}
-                onClick={() => {
-                  setShowAuthPrompt(false);
-                  navigate('/register');
-                }}
-                id="modal-btn-signup"
-              >
-                <UserPlus size={16} strokeWidth={2.2} />
-                Create New Owner Account
-              </button>
-
-              <button
-                type="button"
                 style={{
-                  background: 'transparent',
-                  border: 'none',
-                  color: 'var(--text-muted)',
-                  fontSize: '0.85rem',
-                  padding: '8px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  padding: '12px 14px',
+                  background: 'rgba(99, 102, 241, 0.08)',
+                  border: '1.5px solid rgba(99, 102, 241, 0.25)',
+                  borderRadius: '10px',
                   cursor: 'pointer',
-                  marginTop: 6
+                  transition: 'all 0.2s ease',
+                  color: 'inherit',
+                  textAlign: 'left'
                 }}
-                onClick={() => setShowAuthPrompt(false)}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = 'var(--primary, #6366f1)';
+                  e.currentTarget.style.background = 'rgba(99, 102, 241, 0.15)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = 'rgba(99, 102, 241, 0.25)';
+                  e.currentTarget.style.background = 'rgba(99, 102, 241, 0.08)';
+                }}
               >
-                Cancel
+                <div style={{
+                  width: 38,
+                  height: 38,
+                  borderRadius: '8px',
+                  background: 'var(--primary, #6366f1)',
+                  color: '#fff',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0
+                }}>
+                  <GraduationCap size={20} strokeWidth={2.4} />
+                </div>
+                <div style={{ fontWeight: 700, fontSize: '0.95rem' }}>
+                  {roleMode === 'signin' ? 'Sign In as Student' : 'Sign Up as Student'}
+                </div>
               </button>
+
+              {/* Option 2: House Owner */}
+              <button
+                type="button"
+                onClick={() => {
+                  setShowRoleModal(false);
+                  const path = roleMode === 'signin' ? '/login?role=owner' : '/register?role=owner';
+                  navigate(path);
+                }}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  padding: '12px 14px',
+                  background: 'rgba(34, 197, 94, 0.08)',
+                  border: '1.5px solid rgba(34, 197, 94, 0.25)',
+                  borderRadius: '10px',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  color: 'inherit',
+                  textAlign: 'left'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = '#22c55e';
+                  e.currentTarget.style.background = 'rgba(34, 197, 94, 0.15)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = 'rgba(34, 197, 94, 0.25)';
+                  e.currentTarget.style.background = 'rgba(34, 197, 94, 0.08)';
+                }}
+              >
+                <div style={{
+                  width: 38,
+                  height: 38,
+                  borderRadius: '8px',
+                  background: '#22c55e',
+                  color: '#fff',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0
+                }}>
+                  <Building size={20} strokeWidth={2.4} />
+                </div>
+                <div style={{ fontWeight: 700, fontSize: '0.95rem' }}>
+                  {roleMode === 'signin' ? 'Sign In as House Owner' : 'Sign Up as House Owner'}
+                </div>
+              </button>
+            </div>
+
+            <div style={{ fontSize: '0.86rem', color: 'var(--text-muted)' }}>
+              {roleMode === 'signin' ? (
+                <>
+                  Don't have an account?{' '}
+                  <button
+                    type="button"
+                    onClick={() => setRoleMode('signup')}
+                    style={{ background: 'none', border: 'none', color: 'var(--primary, #6366f1)', fontWeight: 600, cursor: 'pointer', padding: 0 }}
+                  >
+                    Create one
+                  </button>
+                </>
+              ) : (
+                <>
+                  Already have an account?{' '}
+                  <button
+                    type="button"
+                    onClick={() => setRoleMode('signin')}
+                    style={{ background: 'none', border: 'none', color: 'var(--primary, #6366f1)', fontWeight: 600, cursor: 'pointer', padding: 0 }}
+                  >
+                    Sign in
+                  </button>
+                </>
+              )}
             </div>
           </div>
         </div>

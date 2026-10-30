@@ -1,14 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useAuth } from '../context/AuthContext';
 
 function formatMoney(amount) {
   return 'KSh ' + Number(amount || 0).toLocaleString('en-KE');
 }
 
 export default function EnquiryModal({ house, onClose, onSubmitSuccess }) {
-  const [studentName, setStudentName] = useState('');
-  const [studentPhone, setStudentPhone] = useState('');
+  const { user } = useAuth();
+  const [studentName, setStudentName] = useState(user?.name || '');
+  const [studentPhone, setStudentPhone] = useState(user?.phone || user?.email || '');
   const [viewingDate, setViewingDate] = useState('');
   const [message, setMessage] = useState('Hello, I would like to physically inspect this property and confirm room availability.');
+
+  useEffect(() => {
+    if (user) {
+      if (user.name) setStudentName(user.name);
+      if (user.phone || user.email) setStudentPhone(user.phone || user.email);
+    }
+  }, [user]);
 
   if (!house) return null;
 
@@ -25,7 +34,8 @@ export default function EnquiryModal({ house, onClose, onSubmitSuccess }) {
       studentName,
       studentPhone,
       viewingDate,
-      message
+      message,
+      userId: user?.id || null,
     };
 
     try {

@@ -9,6 +9,7 @@ const housesRouter    = require('./routes/houses');
 const authRouter      = require('./routes/auth');
 const accountsRouter  = require('./routes/accounts');
 const enquiriesRouter = require('./routes/enquiries');
+const savedRouter     = require('./routes/saved');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -23,6 +24,7 @@ app.use('/api/houses',    housesRouter);
 app.use('/api/auth',      authRouter);
 app.use('/api/accounts',  accountsRouter);
 app.use('/api/enquiries', enquiriesRouter);
+app.use('/api/saved',     savedRouter);
 
 // Statically serve frontend files (prefer production dist if built, fallback to frontend)
 const distPath = path.join(__dirname, '../dist');

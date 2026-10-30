@@ -111,9 +111,10 @@ router.delete('/me/houses/:id', requireAuth, async (req, res) => {
  * GET /api/accounts/me/enquiries
  * All enquiries for all houses the owner owns.
  */
-router.get('/me/enquiries', requireAuth, (req, res) => {
+router.get('/me/enquiries', requireAuth, async (req, res) => {
   try {
-    const myHouses = getAllHouses().filter(h => h.ownerId === req.user.id);
+    const allHouses = await getAllHouses();
+    const myHouses = allHouses.filter(h => h.ownerId === req.user.id);
     const myHouseIds = new Set(myHouses.map(h => h.id));
 
     const enquiries = readEnquiries().filter(e => myHouseIds.has(Number(e.houseId)));
@@ -126,6 +127,7 @@ router.get('/me/enquiries', requireAuth, (req, res) => {
 
     res.json({ success: true, count: withHouse.length, data: withHouse });
   } catch (error) {
+    console.error('Fetch enquiries error:', error);
     res.status(500).json({ success: false, error: 'Failed to fetch enquiries.' });
   }
 });
@@ -135,7 +137,7 @@ router.get('/me/enquiries', requireAuth, (req, res) => {
  * Owner appends a reply message to an enquiry thread.
  * Body: { text }
  */
-router.post('/me/enquiries/:enquiryId/reply', requireAuth, (req, res) => {
+router.post('/me/enquiries/:enquiryId/reply', requireAuth, async (req, res) => {
   try {
     const { text } = req.body;
     if (!text || !text.trim()) {
@@ -149,7 +151,7 @@ router.post('/me/enquiries/:enquiryId/reply', requireAuth, (req, res) => {
     const enquiry = enquiries[idx];
 
     // Verify owner owns this house
-    const house = getHouseById(enquiry.houseId);
+    const house = await getHouseById(enquiry.houseId);
     if (!house || house.ownerId !== req.user.id) {
       return res.status(403).json({ success: false, error: 'You cannot reply to this enquiry.' });
     }
@@ -204,6 +206,73 @@ router.put('/me/profile', requireAuth, async (req, res) => {
     res.json({ success: true, user: updated });
   } catch (error) {
     res.status(500).json({ success: false, error: 'Failed to update profile.' });
+  }
+});
+
+
+/**
+ * GET /api/accounts/me/student-enquiries
+ * All enquiries sent by this student (by userId or studentPhone/email).
+ */
+router.get('/me/student-enquiries', requireAuth, async (req, res) => {
+  try {
+    const allEnquiries = readEnquiries();
+    const userPhone = req.user.phone ? req.user.phone.toString().trim() : '';
+    const userEmail = req.user.email ? req.user.email.toLowerCase().trim() : '';
+
+    const mine = allEnquiries.filter(e => {
+      if (e.userId && e.userId === req.user.id) return true;
+      if (e.user_id && e.user_id === req.user.id) return true;
+      const sPhone = e.studentPhone ? e.studentPhone.toString().trim() : '';
+      if (userPhone && sPhone && (sPhone.includes(userPhone) || userPhone.includes(sPhone))) return true;
+      if (userEmail && sPhone && sPhone.toLowerCase() === userEmail) return true;
+      return false;
+    });
+
+    res.json({ success: true, count: mine.length, data: mine });
+  } catch (error) {
+    console.error('Student enquiries fetch error:', error);
+    res.status(500).json({ success: false, error: 'Failed to fetch messages.' });
+  }
+});
+
+/**
+ * POST /api/accounts/me/student-enquiries/:enquiryId/reply
+ * Student appends a message to their existing thread.
+ */
+router.post('/me/student-enquiries/:enquiryId/reply', requireAuth, async (req, res) => {
+  try {
+    const { text } = req.body;
+    if (!text || !text.trim()) {
+      return res.status(400).json({ success: false, error: 'Message text is required.' });
+    }
+
+    const enquiries = readEnquiries();
+    const idx = enquiries.findIndex(e => e.id === req.params.enquiryId);
+    if (idx === -1) return res.status(404).json({ success: false, error: 'Conversation not found.' });
+
+    const enquiry = enquiries[idx];
+
+    if (!Array.isArray(enquiry.messages)) {
+      enquiry.messages = [];
+    }
+
+    const newMessage = {
+      from: 'customer',
+      senderName: req.user.name || 'Student',
+      text: text.trim(),
+      at: new Date().toISOString(),
+    };
+
+    enquiry.messages.push(newMessage);
+    enquiry.status = 'open';
+    enquiry.updatedAt = new Date().toISOString();
+
+    saveEnquiries(enquiries);
+    res.json({ success: true, message: newMessage, enquiry });
+  } catch (error) {
+    console.error('Student reply error:', error);
+    res.status(500).json({ success: false, error: 'Failed to send message.' });
   }
 });
 

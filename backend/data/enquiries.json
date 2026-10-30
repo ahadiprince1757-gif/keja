@@ -1,0 +1,29 @@
+[
+  {
+    "id": "enq_1793345147543",
+    "userId": "acc_1793338746661",
+    "houseId": 9,
+    "houseTitle": "Casabella Height",
+    "studentName": "Kiki johns",
+    "studentPhone": "0798765432",
+    "viewingDate": "2026-10-31T10:25",
+    "message": "Hello, I would like to physically inspect this property and confirm room availability.",
+    "status": "replied",
+    "messages": [
+      {
+        "from": "customer",
+        "senderName": "Kiki johns",
+        "text": "Hello, I would like to physically inspect this property and confirm room availability.",
+        "at": "2026-10-30T07:25:47.543Z"
+      },
+      {
+        "from": "owner",
+        "senderName": "kamau",
+        "text": "Yes it is available. I'm waiting for you",
+        "at": "2026-10-30T07:36:29.156Z"
+      }
+    ],
+    "createdAt": "2026-10-30T07:25:47.543Z",
+    "updatedAt": "2026-10-30T07:36:29.156Z"
+  }
+]
