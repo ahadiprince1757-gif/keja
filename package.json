@@ -19,6 +19,7 @@
     "cors": "^2.8.5",
     "dotenv": "^18.0.9",
     "express": "^4.21.1",
+    "google-auth-library": "^11.3.2",
     "jsonwebtoken": "^9.0.3",
     "jwt-decode": "^4.0.0",
     "lucide-react": "^1.64.0",
