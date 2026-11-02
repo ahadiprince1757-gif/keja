@@ -1,0 +1,17 @@
+# Treat all files as text by default
+* text=auto
+
+# Binary files - no line ending conversion
+*.png binary
+*.ico binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.svg binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.eot binary
+*.pdf binary
+*.zip binary
