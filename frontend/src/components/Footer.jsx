@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Plus, Building, LogIn, UserPlus, AlertCircle } from 'lucide-react';
+import { Plus, Building, LogIn, UserPlus, AlertCircle, ShieldCheck } from 'lucide-react';
 
 export default function Footer({ onOpenListHouse }) {
   const { user, isLoggedIn } = useAuth();
@@ -73,7 +73,27 @@ export default function Footer({ onOpenListHouse }) {
           </div>
 
           <div className="footer-bottom">
-            <div>&copy; 2026 Keja</div>
+            <div>&copy; 2026 KejaKU. All rights reserved.</div>
+            <div className="footer-admin-link-wrapper">
+              <Link
+                to={user?.role === 'super_admin' ? '/admin' : '/login'}
+                className="footer-admin-link"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '5px',
+                  color: '#728c7e',
+                  textDecoration: 'none',
+                  fontSize: '0.8rem',
+                  transition: 'color 0.2s ease'
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--accent, #10b981)')}
+                onMouseLeave={(e) => (e.currentTarget.style.color = '#728c7e')}
+              >
+                <ShieldCheck size={14} />
+                Super Admin Login
+              </Link>
+            </div>
           </div>
         </div>
       </footer>
@@ -100,61 +120,60 @@ export default function Footer({ onOpenListHouse }) {
                 border: isStudent ? '1px solid rgba(239, 68, 68, 0.25)' : '1px solid rgba(34, 197, 94, 0.25)'
               }}
             >
-              {isStudent ? <AlertCircle size={28} strokeWidth={2.2} /> : <Building size={28} strokeWidth={2.2} />}
+              {isStudent ? <AlertCircle size={28} /> : <Building size={28} />}
             </div>
 
-            <h3 style={{ fontSize: '1.3rem', fontWeight: 800, color: 'var(--text-main)', marginBottom: 8 }}>
-              {isStudent ? 'Owner / Caretaker Account Required' : 'Owner Account Required'}
+            <h3 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '8px' }}>
+              {isStudent ? 'House Owner Account Required' : 'List Your Rental on KejaKU'}
             </h3>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '0.92rem', lineHeight: 1.5, marginBottom: 24 }}>
+
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.92rem', lineHeight: 1.6, marginBottom: '24px' }}>
               {isStudent
-                ? "You are signed in as a student. Only registered property owners or caretakers are authorized to list houses. Please switch to an owner account."
-                : "To list a house, manage vacant units, and connect with student tenants, sign in or register as a house owner or caretaker."}
+                ? 'You are currently signed in as a student. To add and manage property listings, please sign in with or create a House Owner account.'
+                : 'Sign in to your House Owner account to post new vacancies, update rental details, and connect directly with KU students.'}
             </p>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
               <button
                 type="button"
                 className="btn btn-primary"
-                style={{ width: '100%', justifyContent: 'center', padding: '12px', gap: 8 }}
                 onClick={() => {
                   setShowAuthPrompt(false);
                   navigate('/login?role=owner');
                 }}
-                id="footer-modal-btn-signin"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
+                  padding: '12px',
+                  fontWeight: 700,
+                  fontSize: '0.95rem'
+                }}
               >
-                <LogIn size={16} strokeWidth={2.4} />
-                {isStudent ? 'Switch / Sign In as House Owner' : 'Sign In as House Owner'}
+                <LogIn size={16} />
+                Sign In as House Owner
               </button>
 
               <button
                 type="button"
-                className="btn btn-saved-houses"
-                style={{ width: '100%', justifyContent: 'center', padding: '12px', gap: 8 }}
+                className="btn btn-secondary"
                 onClick={() => {
                   setShowAuthPrompt(false);
                   navigate('/register?role=owner');
                 }}
-                id="footer-modal-btn-signup"
-              >
-                <UserPlus size={16} strokeWidth={2.2} />
-                Create New Owner Account
-              </button>
-
-              <button
-                type="button"
                 style={{
-                  background: 'transparent',
-                  border: 'none',
-                  color: 'var(--text-muted)',
-                  fontSize: '0.85rem',
-                  padding: '8px',
-                  cursor: 'pointer',
-                  marginTop: 6
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
+                  padding: '12px',
+                  fontWeight: 600,
+                  fontSize: '0.95rem'
                 }}
-                onClick={() => setShowAuthPrompt(false)}
               >
-                Cancel
+                <UserPlus size={16} />
+                Create Landlord Account
               </button>
             </div>
           </div>

@@ -4,12 +4,12 @@ const express = require('express');
 const cors = require('cors');
 const fs = require('fs');
 
-
 const housesRouter    = require('./routes/houses');
 const authRouter      = require('./routes/auth');
 const accountsRouter  = require('./routes/accounts');
 const enquiriesRouter = require('./routes/enquiries');
 const savedRouter     = require('./routes/saved');
+const adminRouter     = require('./routes/admin');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -25,6 +25,7 @@ app.use('/api/auth',      authRouter);
 app.use('/api/accounts',  accountsRouter);
 app.use('/api/enquiries', enquiriesRouter);
 app.use('/api/saved',     savedRouter);
+app.use('/api/admin',     adminRouter);
 
 // Statically serve frontend files (prefer production dist if built, fallback to frontend)
 const distPath = path.join(__dirname, '../dist');
@@ -49,5 +50,3 @@ app.listen(PORT, '0.0.0.0', () => {
   console.log(`  - API:     http://localhost:${PORT}/api/houses`);
   console.log(`===============================================`);
 });
-
-module.exports = app;
