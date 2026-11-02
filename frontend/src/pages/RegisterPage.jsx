@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { GoogleLogin } from '@react-oauth/google';
 import { useAuth } from '../context/AuthContext';
 import { AlertCircle } from 'lucide-react';
+import PhonePromptModal from '../components/PhonePromptModal';
 
 export default function RegisterPage() {
   const { login } = useAuth();
@@ -13,6 +15,7 @@ export default function RegisterPage() {
   const [form, setForm] = useState({ name: '', email: '', phone: '', password: '', confirm: '' });
   const [error, setError]     = useState('');
   const [loading, setLoading] = useState(false);
+  const [pendingGoogleUser, setPendingGoogleUser] = useState(null);
 
   const handleChange = (e) => setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
 
@@ -53,7 +56,6 @@ export default function RegisterPage() {
       }
 
       login(data.token, data.user);
-      // If student, go back to home page to browse & save houses; if owner, go to dashboard
       navigate(data.user.role === 'owner' ? '/dashboard' : '/', { replace: true });
     } catch {
       setError('Network error. Please check your connection.');
@@ -61,8 +63,57 @@ export default function RegisterPage() {
     }
   };
 
+  const handleGoogleSuccess = async (credentialResponse) => {
+    try {
+      setError('');
+      setLoading(true);
+
+      const res = await fetch('/api/auth/google', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          credential: credentialResponse.credential,
+          role,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        setError(data.error || 'Google Sign-Up failed.');
+        setLoading(false);
+        return;
+      }
+
+      login(data.token, data.user);
+      setLoading(false);
+
+      // If user does not have a phone number yet, show the phone prompt modal
+      if (!data.user.phone || !data.user.phone.trim()) {
+        setPendingGoogleUser(data.user);
+      } else {
+        navigate(data.user.role === 'owner' ? '/dashboard' : '/', { replace: true });
+      }
+    } catch {
+      setError('Network error with Google Sign-Up.');
+      setLoading(false);
+    }
+  };
+
+  const handlePhoneModalComplete = (updatedUser) => {
+    setPendingGoogleUser(null);
+    navigate(updatedUser.role === 'owner' ? '/dashboard' : '/', { replace: true });
+  };
+
   return (
     <div className="auth-page">
+      {pendingGoogleUser && (
+        <PhonePromptModal
+          user={pendingGoogleUser}
+          onComplete={handlePhoneModalComplete}
+        />
+      )}
+
       <Link to="/" className="auth-back-link">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
           <line x1="19" y1="12" x2="5" y2="12"/>
@@ -87,7 +138,7 @@ export default function RegisterPage() {
           {role === 'student' ? 'Save houses, book visits, and chat with caretakers.' : 'List your properties and manage tenants.'}
         </p>
 
-        {/* Minimal Role Selector */}
+        {/* Role Selector */}
         <div style={{
           display: 'flex',
           background: 'rgba(255, 255, 255, 0.05)',
@@ -140,6 +191,21 @@ export default function RegisterPage() {
             <AlertCircle size={16} /> {error}
           </div>
         )}
+
+        {/* Google Sign Up */}
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
+          <GoogleLogin
+            onSuccess={handleGoogleSuccess}
+            onError={() => setError('Google Sign-Up was cancelled or failed.')}
+            theme="outline"
+            size="large"
+            shape="rectangular"
+            width="100%"
+            text="signup_with"
+          />
+        </div>
+
+        <div className="auth-divider"><span>or register with email</span></div>
 
         <form className="auth-form" onSubmit={handleSubmit} noValidate>
           <div className="form-group">

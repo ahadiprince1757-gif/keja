@@ -25,4 +25,19 @@ function requireAuth(req, res, next) {
   }
 }
 
-module.exports = { requireAuth, JWT_SECRET };
+/**
+ * Middleware: require one or more specific roles (e.g. 'super_admin')
+ */
+function requireRole(...allowedRoles) {
+  return (req, res, next) => {
+    if (!req.user) {
+      return res.status(401).json({ success: false, error: 'Authentication required.' });
+    }
+    if (!allowedRoles.includes(req.user.role)) {
+      return res.status(403).json({ success: false, error: 'Access denied: Insufficient privileges.' });
+    }
+    next();
+  };
+}
+
+module.exports = { requireAuth, requireRole, JWT_SECRET };

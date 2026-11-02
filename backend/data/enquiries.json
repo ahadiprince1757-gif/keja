@@ -1,5 +1,26 @@
 [
   {
+    "id": "enq_1793619267804",
+    "userId": "acc_1793612140858",
+    "houseId": 9,
+    "houseTitle": "Casabella Height",
+    "studentName": "Philip Wafula",
+    "studentPhone": "philipwafula97@gmail.com",
+    "viewingDate": "2026-11-20T14:34",
+    "message": "Hello, I would like to physically inspect this property and confirm room availability.",
+    "status": "open",
+    "messages": [
+      {
+        "from": "customer",
+        "senderName": "Philip Wafula",
+        "text": "Hello, I would like to physically inspect this property and confirm room availability.",
+        "at": "2026-11-02T11:34:27.804Z"
+      }
+    ],
+    "createdAt": "2026-11-02T11:34:27.804Z",
+    "updatedAt": "2026-11-02T11:34:27.804Z"
+  },
+  {
     "id": "enq_1793345147543",
     "userId": "acc_1793338746661",
     "houseId": 9,

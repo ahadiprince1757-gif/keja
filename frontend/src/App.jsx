@@ -5,6 +5,7 @@ import LoginPage          from './pages/LoginPage';
 import RegisterPage       from './pages/RegisterPage';
 import OwnerDashboard     from './pages/OwnerDashboard';
 import StudentAccountPage from './pages/StudentAccountPage';
+import AdminDashboard     from './pages/AdminDashboard';
 import AuthGuard          from './components/AuthGuard';
 
 export default function App() {
@@ -25,8 +26,16 @@ export default function App() {
         <Route
           path="/dashboard/*"
           element={
-            <AuthGuard>
+            <AuthGuard allowedRoles={['owner', 'super_admin']}>
               <OwnerDashboard />
+            </AuthGuard>
+          }
+        />
+        <Route
+          path="/admin/*"
+          element={
+            <AuthGuard allowedRoles={['super_admin']}>
+              <AdminDashboard />
             </AuthGuard>
           }
         />
